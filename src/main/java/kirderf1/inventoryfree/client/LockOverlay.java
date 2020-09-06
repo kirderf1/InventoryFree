@@ -3,7 +3,6 @@ package kirderf1.inventoryfree.client;
 import com.mojang.blaze3d.platform.GlStateManager;
 import kirderf1.inventoryfree.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
-import kirderf1.inventoryfree.SlotBlocker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.Widget;
@@ -14,6 +13,10 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+/**
+ * A widget which will draw an icon on top of all slots which are blocked.
+ * It is also responsible for drawing the icon on the overlay hotbar when appropriate.
+ */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public class LockOverlay extends Widget
 {

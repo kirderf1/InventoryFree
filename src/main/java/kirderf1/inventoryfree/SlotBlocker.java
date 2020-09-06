@@ -13,6 +13,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * The common class for inserting our custom slots into containers.
+ * Listens to some server-side events to handle new containers.
+ */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
 public class SlotBlocker
 {

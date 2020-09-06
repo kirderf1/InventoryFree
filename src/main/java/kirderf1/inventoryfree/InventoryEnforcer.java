@@ -10,6 +10,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Is responsible for enforcing that blocked inventory slots are empty,
+ * but also for stopping item pickups when appropriate.
+ */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
 public class InventoryEnforcer
 {

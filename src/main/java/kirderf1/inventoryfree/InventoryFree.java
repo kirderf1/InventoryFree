@@ -7,6 +7,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
+/**
+ * The central mod class. Currently holds the config and the player/slot conditions.
+ */
 @Mod("inventory_free")
 public class InventoryFree
 {

@@ -6,6 +6,10 @@ import net.minecraft.item.ItemStack;
 
 import java.util.function.BooleanSupplier;
 
+/**
+ * A custom slot to replace any slots that might become blocked.
+ * Note that this isn't a proper wrapper slot, so it can overwrite any custom slot behavior of slots being replaced.
+ */
 public class BlockedSlot extends Slot
 {
 	protected final BooleanSupplier blockCondition;

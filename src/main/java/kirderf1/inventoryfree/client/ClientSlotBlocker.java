@@ -12,6 +12,10 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Same as {@link SlotBlocker}, but for client-side events.
+ * Is also responsible for applying the {@link LockOverlay}.
+ */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public class ClientSlotBlocker
 {

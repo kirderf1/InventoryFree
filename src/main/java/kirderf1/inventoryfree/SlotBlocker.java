@@ -47,15 +47,11 @@ public class SlotBlocker
 			Slot slot = slots.get(index);
 			if(!(slot instanceof BlockedSlot) && shouldReplaceSlot(slot, player.inventory))
 			{
-				Slot newSlot = new BlockedSlot(slot, () -> isDisabledFor(player));
+				final int finalIndex = slot.getSlotIndex();
+				Slot newSlot = new BlockedSlot(slot, () -> InventoryFree.appliesTo(player) && InventoryFree.isSlotToBeBlocked(finalIndex));
 				slots.set(index, newSlot);
 			}
 		}
-	}
-	
-	public static boolean isDisabledFor(PlayerEntity player)
-	{
-		return player.abilities.isCreativeMode;
 	}
 	
 	private static boolean shouldReplaceSlot(Slot slot, PlayerInventory playerInv)

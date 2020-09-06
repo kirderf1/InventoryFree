@@ -1,8 +1,6 @@
 package kirderf1.inventoryfree;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -23,7 +21,7 @@ public class InventoryEnforcer
 		if(event.side != LogicalSide.SERVER || event.phase != TickEvent.Phase.START)
 			return;
 		
-		if(shouldApply(event.player))
+		if(InventoryFree.appliesTo(event.player))
 		{
 			PlayerInventory inventory = event.player.inventory;
 			int counter = 0;
@@ -40,27 +38,17 @@ public class InventoryEnforcer
 	@SubscribeEvent
 	public static void onItemPickup(EntityItemPickupEvent event)
 	{
-		if(shouldApply(event.getPlayer()))
+		if(InventoryFree.appliesTo(event.getPlayer()))
 		{
 			if(!canStoreItem(event.getPlayer().inventory, event.getItem().getItem()))
 				event.setCanceled(true);
 		}
 	}
 	
-	public static boolean isSlotToBeBlocked(int index)
-	{
-		return index >= InventoryFree.CONFIG.availableSlots.get() && index < 36;
-	}
-	
-	private static boolean shouldApply(PlayerEntity player)
-	{
-		return player instanceof ServerPlayerEntity && ((ServerPlayerEntity) player).interactionManager.survivalOrAdventure();
-	}
-	
 	private static boolean enforceSlot(int index, PlayerInventory inventory)
 	{
 		ItemStack stack = inventory.getStackInSlot(index);
-		if(isSlotToBeBlocked(index) && !stack.isEmpty())
+		if(InventoryFree.isSlotToBeBlocked(index) && !stack.isEmpty())
 		{
 			int freeIndex = findAvailableSlot(inventory);
 			inventory.removeStackFromSlot(index);
@@ -80,14 +68,14 @@ public class InventoryEnforcer
 		if(stack.isDamaged())
 			return false;
 		int index = inventory.storeItemStack(stack);
-		return index >= 0 && !isSlotToBeBlocked(index);
+		return index >= 0 && !InventoryFree.isSlotToBeBlocked(index);
 	}
 	
 	private static int findAvailableSlot(PlayerInventory inventory)
 	{
 		for(int index = 0; index < inventory.mainInventory.size(); index++)
 		{
-			if(!isSlotToBeBlocked(index) && inventory.getStackInSlot(index).isEmpty())
+			if(!InventoryFree.isSlotToBeBlocked(index) && inventory.getStackInSlot(index).isEmpty())
 				return index;
 		}
 		return -1;

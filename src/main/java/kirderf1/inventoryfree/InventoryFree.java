@@ -1,5 +1,6 @@
 package kirderf1.inventoryfree;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -37,6 +38,16 @@ public class InventoryFree
 					.defineInRange("availableSlots", 9, 1, 36);
 			builder.pop();
 		}
+	}
+	
+	public static boolean isSlotToBeBlocked(int index)
+	{
+		return index >= InventoryFree.CONFIG.availableSlots.get() && index < 36;
+	}
+	
+	public static boolean appliesTo(PlayerEntity player)
+	{
+		return !player.isCreative() && !player.isSpectator();
 	}
 	
 }

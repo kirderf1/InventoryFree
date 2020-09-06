@@ -31,7 +31,7 @@ public class LockOverlay extends Widget
 	public void renderButton(int mouseX, int mouseY, float partialTicks)
 	{
 		Minecraft mc = Minecraft.getInstance();
-		if(SlotBlocker.isDisabledFor(mc.player))
+		if(!InventoryFree.appliesTo(mc.player))
 			return;
 		
 		mc.getTextureManager().bindTexture(LOCK);
@@ -52,7 +52,7 @@ public class LockOverlay extends Widget
 		if(event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
 		{
 			Minecraft mc = Minecraft.getInstance();
-			if(SlotBlocker.isDisabledFor(mc.player) || InventoryFree.CONFIG.availableSlots.get() >= 9)
+			if(!InventoryFree.appliesTo(mc.player) || InventoryFree.CONFIG.availableSlots.get() >= 9)
 				return;
 			
 			mc.getTextureManager().bindTexture(LOCK);

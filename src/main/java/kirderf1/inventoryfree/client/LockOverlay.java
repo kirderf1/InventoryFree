@@ -1,6 +1,6 @@
 package kirderf1.inventoryfree.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import kirderf1.inventoryfree.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
 import net.minecraft.client.Minecraft;
@@ -38,13 +38,13 @@ public class LockOverlay extends Widget
 			return;
 		
 		mc.getTextureManager().bindTexture(LOCK);
-		GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
 		
 		for(Slot slot : screen.getContainer().inventorySlots)
 		{
 			if(slot instanceof BlockedSlot && !slot.isEnabled())
 			{
-				blit(screen.getGuiLeft() + slot.xPos, screen.getGuiTop() + slot.yPos, blitOffset, 0, 0, 16, 16, 16, 16);
+				blit(screen.getGuiLeft() + slot.xPos, screen.getGuiTop() + slot.yPos, getBlitOffset(), 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}
@@ -59,12 +59,12 @@ public class LockOverlay extends Widget
 				return;
 			
 			mc.getTextureManager().bindTexture(LOCK);
-			GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GlStateManager.enableBlend();
-			GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.enableBlend();
+			RenderSystem.defaultBlendFunc();
 			
-			int scaledWidth = mc.mainWindow.getScaledWidth();
-			int scaledHeight = mc.mainWindow.getScaledHeight();
+			int scaledWidth = mc.getMainWindow().getScaledWidth();
+			int scaledHeight = mc.getMainWindow().getScaledHeight();
 			
 			for(Slot slot : mc.player.container.inventorySlots)
 			{

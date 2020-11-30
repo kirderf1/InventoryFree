@@ -78,7 +78,7 @@ public class InventoryFree
 	
 	public static boolean appliesTo(PlayerEntity player)
 	{
-		return !player.isCreative() && !player.isSpectator();
+		return player != null && !player.isCreative() && !player.isSpectator();
 	}
 	
 }

@@ -55,7 +55,7 @@ public class LockOverlay extends Widget
 		if(event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
 		{
 			Minecraft mc = Minecraft.getInstance();
-			if(!InventoryFree.appliesTo(mc.player) || InventoryFree.CONFIG.availableSlots.get() >= 9)
+			if(!InventoryFree.appliesTo(mc.player) || ClientData.getAvailableSlots() >= 9)
 				return;
 			
 			mc.getTextureManager().bindTexture(LOCK);

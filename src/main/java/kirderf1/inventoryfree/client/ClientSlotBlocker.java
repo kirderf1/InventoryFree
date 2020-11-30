@@ -3,14 +3,18 @@ package kirderf1.inventoryfree.client;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.SlotBlocker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
 
 /**
  * Same as {@link SlotBlocker}, but for client-side events.
@@ -20,6 +24,13 @@ import org.apache.logging.log4j.Logger;
 public class ClientSlotBlocker
 {
 	private static final Logger LOGGER = LogManager.getLogger();
+	
+	@SubscribeEvent
+	public static void onLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+	{
+		ClientPlayerEntity player = Objects.requireNonNull(event.getPlayer());
+		SlotBlocker.insertBlockedSlots(player.container, player, ClientData::getAvailableSlots);
+	}
 	
 	@SubscribeEvent
 	public static void onGuiOpened(GuiOpenEvent event)

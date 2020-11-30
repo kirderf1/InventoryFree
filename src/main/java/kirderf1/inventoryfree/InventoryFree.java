@@ -42,6 +42,7 @@ public class InventoryFree
 	{
 		public final ForgeConfigSpec.IntValue availableSlots;
 		public final ForgeConfigSpec.ConfigValue<String> unlockSlotItem;
+		public final ForgeConfigSpec.BooleanValue clearUnlockedOnDeath;
 		
 		private Config(ForgeConfigSpec.Builder builder)
 		{
@@ -50,6 +51,8 @@ public class InventoryFree
 					.defineInRange("availableSlots", 9, 1, 36);
 			unlockSlotItem = builder.comment("Specifies a registry name for an item that on use would unlock a slot and consume the item, or nothing to not allow any item. Examples: minecraft:rabbit_foot, minecraft:nether_star, minestuck:captcha_card")
 					.define("unlockSlotItem", "");
+			clearUnlockedOnDeath = builder.comment("Determines if the number of unlocked slots will be cleared on death")
+					.define("clearUnlockedOnDeath", false);
 			builder.pop();
 		}
 	}

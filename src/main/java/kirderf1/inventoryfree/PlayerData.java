@@ -22,6 +22,14 @@ public class PlayerData
 		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(unlockedSlots));
 	}
 	
+	@SubscribeEvent
+	public static void onClone(PlayerEvent.Clone event)
+	{
+		if(event.isWasDeath() && InventoryFree.CONFIG.clearUnlockedOnDeath.get()
+				&& getUnlockedSlots((ServerPlayerEntity) event.getPlayer()) != 0)
+			setUnlockedSlots((ServerPlayerEntity) event.getPlayer(), 0);
+	}
+	
 	public static int getAvailableSlots(ServerPlayerEntity player)
 	{
 		return InventoryFree.getAvailableSlots(getUnlockedSlots(player));

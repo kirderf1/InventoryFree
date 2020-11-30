@@ -2,6 +2,7 @@ package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -53,6 +54,10 @@ public class InventoryFree
 		PacketHandler.registerPackets();
 	}
 	
+	public static int getAvailableSlots(int unlockedSlots)
+	{
+		return MathHelper.clamp(InventoryFree.CONFIG.availableSlots.get() + unlockedSlots, 1, 36);
+	}
 	public static boolean isSlotToBeBlocked(int index, int availableSlots)
 	{
 		return index >= availableSlots && index < 36;

@@ -24,7 +24,7 @@ public class PacketHandler
 		if(id != 0)
 			throw new IllegalStateException("Packets already registered!");
 		
-		register(AvailableSlotsPacket.class, AvailableSlotsPacket::decode);
+		register(UnlockedSlotsPacket.class, UnlockedSlotsPacket::decode);
 	}
 	
 	private static <T extends Packet> void register(Class<T> c, Function<PacketBuffer, T> decoder)

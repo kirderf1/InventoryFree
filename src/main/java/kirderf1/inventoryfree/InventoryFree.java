@@ -53,9 +53,9 @@ public class InventoryFree
 		PacketHandler.registerPackets();
 	}
 	
-	public static boolean isSlotToBeBlocked(int index)
+	public static boolean isSlotToBeBlocked(int index, int availableSlots)
 	{
-		return index >= InventoryFree.CONFIG.availableSlots.get() && index < 36;
+		return index >= availableSlots && index < 36;
 	}
 	
 	public static boolean appliesTo(PlayerEntity player)

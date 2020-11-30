@@ -28,7 +28,7 @@ public class ClientSlotBlocker
 		{
 			LOGGER.debug("Container screen being opened. Inserting custom inventory slots...");
 			ContainerScreen<?> screen = (ContainerScreen<?>) event.getGui();
-			SlotBlocker.insertBlockedSlots(screen.getContainer(), Minecraft.getInstance().player);
+			SlotBlocker.insertBlockedSlots(screen.getContainer(), Minecraft.getInstance().player, ClientData::getAvailableSlots);
 		}
 	}
 	

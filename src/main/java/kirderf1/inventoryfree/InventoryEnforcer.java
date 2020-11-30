@@ -1,6 +1,7 @@
 package kirderf1.inventoryfree;
 
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
@@ -28,14 +29,17 @@ public class InventoryEnforcer
 		if(InventoryFree.appliesTo(event.player))
 		{
 			PlayerInventory inventory = event.player.inventory;
+			int availableSlots = PlayerData.getAvailableSlots((ServerPlayerEntity) event.player);
+			
 			int counter = 0;
 			for(int index = 0; index < inventory.getSizeInventory(); index++)
 			{
-				if(enforceSlot(index, inventory))
+				if(enforceSlot(index, inventory, availableSlots))
 					counter++;
 			}
 			if(counter > 0)
-				LOGGER.info("Player \"{}\" had {} item stacks in invalid places this tick.", event.player.getDisplayName().getFormattedText(), counter);
+				LOGGER.info("Player \"{}\" had {} item stacks in invalid places this tick.",
+						event.player.getDisplayName().getFormattedText(), counter);
 		}
 	}
 	
@@ -44,17 +48,18 @@ public class InventoryEnforcer
 	{
 		if(InventoryFree.appliesTo(event.getPlayer()))
 		{
-			if(!canStoreItem(event.getPlayer().inventory, event.getItem().getItem()))
+			if(!canStoreItem(event.getPlayer().inventory, event.getItem().getItem(),
+					PlayerData.getAvailableSlots((ServerPlayerEntity) event.getPlayer())))
 				event.setCanceled(true);
 		}
 	}
 	
-	private static boolean enforceSlot(int index, PlayerInventory inventory)
+	private static boolean enforceSlot(int index, PlayerInventory inventory, int availableSlots)
 	{
 		ItemStack stack = inventory.getStackInSlot(index);
-		if(InventoryFree.isSlotToBeBlocked(index) && !stack.isEmpty())
+		if(InventoryFree.isSlotToBeBlocked(index, availableSlots) && !stack.isEmpty())
 		{
-			int freeIndex = findAvailableSlot(inventory);
+			int freeIndex = findAvailableSlot(inventory, availableSlots);
 			inventory.removeStackFromSlot(index);
 			if(freeIndex < 0)
 				inventory.player.dropItem(stack, true, false);
@@ -65,21 +70,21 @@ public class InventoryEnforcer
 		return false;
 	}
 	
-	private static boolean canStoreItem(PlayerInventory inventory, ItemStack stack)
+	private static boolean canStoreItem(PlayerInventory inventory, ItemStack stack, int availableSlots)
 	{
-		if(findAvailableSlot(inventory) != -1)
+		if(findAvailableSlot(inventory, availableSlots) != -1)
 			return true;
 		if(stack.isDamaged())
 			return false;
 		int index = inventory.storeItemStack(stack);
-		return index >= 0 && !InventoryFree.isSlotToBeBlocked(index);
+		return index >= 0 && !InventoryFree.isSlotToBeBlocked(index, availableSlots);
 	}
 	
-	private static int findAvailableSlot(PlayerInventory inventory)
+	private static int findAvailableSlot(PlayerInventory inventory, int availableSlots)
 	{
 		for(int index = 0; index < inventory.mainInventory.size(); index++)
 		{
-			if(!InventoryFree.isSlotToBeBlocked(index) && inventory.getStackInSlot(index).isEmpty())
+			if(!InventoryFree.isSlotToBeBlocked(index, availableSlots) && inventory.getStackInSlot(index).isEmpty())
 				return index;
 		}
 		return -1;

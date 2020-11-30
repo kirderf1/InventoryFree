@@ -1,11 +1,10 @@
 package kirderf1.inventoryfree;
 
-import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
 import kirderf1.inventoryfree.network.PacketHandler;
+import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -30,7 +29,18 @@ public class PlayerData
 	
 	public static int getUnlockedSlots(ServerPlayerEntity player)
 	{
-		return 0;
+		return getPersistentTag(player).getInt("unlocked_slots");
+	}
+	
+	public static void unlockSlot(ServerPlayerEntity player)
+	{
+		CompoundNBT nbt = getOrCreatePersistentTag(player);
+		nbt.putInt("unlocked_slots", nbt.getInt("unlocked_slots") + 1);
+	}
+	
+	public static void setUnlockedSlots(ServerPlayerEntity player, int unlockedSlots)
+	{
+		getOrCreatePersistentTag(player).putInt("unlocked_slots", unlockedSlots);
 	}
 	
 	public static CompoundNBT getPersistentTag(ServerPlayerEntity player)

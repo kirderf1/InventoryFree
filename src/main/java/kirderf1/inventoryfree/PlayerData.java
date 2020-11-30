@@ -32,15 +32,17 @@ public class PlayerData
 		return getPersistentTag(player).getInt("unlocked_slots");
 	}
 	
-	public static void unlockSlot(ServerPlayerEntity player)
+	public static void unlockSlots(ServerPlayerEntity player, int amount)
 	{
 		CompoundNBT nbt = getOrCreatePersistentTag(player);
-		nbt.putInt("unlocked_slots", nbt.getInt("unlocked_slots") + 1);
+		nbt.putInt("unlocked_slots", nbt.getInt("unlocked_slots") + amount);
+		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(nbt.getInt("unlocked_slots")));
 	}
 	
 	public static void setUnlockedSlots(ServerPlayerEntity player, int unlockedSlots)
 	{
 		getOrCreatePersistentTag(player).putInt("unlocked_slots", unlockedSlots);
+		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(unlockedSlots));
 	}
 	
 	public static CompoundNBT getPersistentTag(ServerPlayerEntity player)

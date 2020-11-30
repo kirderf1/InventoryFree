@@ -4,18 +4,19 @@ import kirderf1.inventoryfree.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * The central mod class. Currently holds the config and the player/slot conditions.
  */
 @Mod(InventoryFree.MOD_ID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = InventoryFree.MOD_ID)
 public class InventoryFree
 {
 	public static final String MOD_ID = "inventory_free";
@@ -26,6 +27,8 @@ public class InventoryFree
 	public InventoryFree()
 	{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::setup);
+		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onServerStarting);
 	}
 	
 	static
@@ -48,10 +51,14 @@ public class InventoryFree
 		}
 	}
 	
-	@SubscribeEvent
 	public static void setup(FMLCommonSetupEvent event)
 	{
 		PacketHandler.registerPackets();
+	}
+	
+	public static void onServerStarting(FMLServerStartingEvent event)
+	{
+		InventorySlotsCommand.register(event.getCommandDispatcher());
 	}
 	
 	public static int getAvailableSlots(int unlockedSlots)

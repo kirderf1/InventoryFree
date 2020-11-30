@@ -10,7 +10,7 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * The central mod class. Currently holds the config and the player/slot conditions.
  */
-@Mod("inventory_free")
+@Mod(InventoryFree.MOD_ID)
 public class InventoryFree
 {
 	public static final String MOD_ID = "inventory_free";

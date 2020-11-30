@@ -41,12 +41,15 @@ public class InventoryFree
 	public static class Config
 	{
 		public final ForgeConfigSpec.IntValue availableSlots;
+		public final ForgeConfigSpec.ConfigValue<String> unlockSlotItem;
 		
 		private Config(ForgeConfigSpec.Builder builder)
 		{
 			builder.push("options");
 			availableSlots = builder.comment("Defines the number of inventory slots that will be available.")
 					.defineInRange("availableSlots", 9, 1, 36);
+			unlockSlotItem = builder.comment("Specifies a registry name for an item that on use would unlock a slot and consume the item, or nothing to not allow any item. Examples: minecraft:rabbit_foot, minecraft:nether_star, minestuck:captcha_card")
+					.define("unlockSlotItem", "");
 			builder.pop();
 		}
 	}

@@ -15,6 +15,6 @@ public class UnlockTooltipHandler
 	public static void onTooltipEvent(ItemTooltipEvent event)
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
-			event.getToolTip().add(new StringTextComponent("Right-click in hand to consume and unlock an inventory slot!").applyTextStyle(TextFormatting.AQUA));	//TODO translation key
+			event.getToolTip().add(new StringTextComponent("Right-click in hand to consume and unlock an inventory slot!").mergeStyle(TextFormatting.AQUA));	//TODO translation key
 	}
 }

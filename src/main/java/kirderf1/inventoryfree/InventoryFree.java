@@ -5,11 +5,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -28,7 +28,7 @@ public class InventoryFree
 	{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::setup);
-		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onServerStarting);
+		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
 	}
 	
 	static
@@ -62,9 +62,9 @@ public class InventoryFree
 		PacketHandler.registerPackets();
 	}
 	
-	public static void onServerStarting(FMLServerStartingEvent event)
+	public static void onRegisterCommands(RegisterCommandsEvent event)
 	{
-		InventorySlotsCommand.register(event.getCommandDispatcher());
+		InventorySlotsCommand.register(event.getDispatcher());
 	}
 	
 	public static int getAvailableSlots(int unlockedSlots)

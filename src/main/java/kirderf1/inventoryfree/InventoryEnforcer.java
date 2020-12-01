@@ -39,7 +39,7 @@ public class InventoryEnforcer
 			}
 			if(counter > 0)
 				LOGGER.info("Player \"{}\" had {} item stacks in invalid places this tick.",
-						event.player.getDisplayName().getFormattedText(), counter);
+						event.player.getDisplayName().getString(), counter);
 		}
 	}
 	

@@ -25,9 +25,15 @@ public class PlayerData
 	@SubscribeEvent
 	public static void onClone(PlayerEvent.Clone event)
 	{
-		if(event.isWasDeath() && InventoryFree.CONFIG.clearUnlockedOnDeath.get()
-				&& getUnlockedSlots((ServerPlayerEntity) event.getPlayer()) != 0)
-			setUnlockedSlots((ServerPlayerEntity) event.getPlayer(), 0);
+		int unlockedSlots = getUnlockedSlots((ServerPlayerEntity) event.getPlayer());
+		if(event.isWasDeath() && InventoryFree.CONFIG.unlockedLostOnDeath.get() != 0
+				&& unlockedSlots != 0)
+		{
+			if(InventoryFree.CONFIG.unlockedLostOnDeath.get() < 0)
+				setUnlockedSlots((ServerPlayerEntity) event.getPlayer(), 0);
+			else setUnlockedSlots((ServerPlayerEntity) event.getPlayer(), Math.min(unlockedSlots,
+					Math.max(0, unlockedSlots - InventoryFree.CONFIG.unlockedLostOnDeath.get())));
+		}
 	}
 	
 	public static int getAvailableSlots(ServerPlayerEntity player)

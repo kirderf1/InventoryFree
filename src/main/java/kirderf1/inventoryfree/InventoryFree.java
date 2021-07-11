@@ -1,8 +1,12 @@
 package kirderf1.inventoryfree;
 
+import kirderf1.inventoryfree.capability.LockedInvHandler;
+import kirderf1.inventoryfree.capability.ModCapabilities;
 import kirderf1.inventoryfree.network.PacketHandler;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.GameType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -11,6 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -28,6 +33,7 @@ public class InventoryFree
 	{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::setup);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::onConfigReload);
 		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
 	}
 	
@@ -60,6 +66,14 @@ public class InventoryFree
 	public static void setup(FMLCommonSetupEvent event)
 	{
 		PacketHandler.registerPackets();
+		ModCapabilities.register();
+	}
+	
+	public static void onConfigReload(ModConfig.Reloading event)
+	{
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if(server != null)
+			server.runAsync(() -> LockedInvHandler.onConfigReload(server));
 	}
 	
 	public static void onRegisterCommands(RegisterCommandsEvent event)
@@ -79,6 +93,11 @@ public class InventoryFree
 	public static boolean appliesTo(PlayerEntity player)
 	{
 		return player != null && !player.isCreative() && !player.isSpectator();
+	}
+	
+	public static boolean appliesTo(GameType gameMode)
+	{
+		return gameMode.isSurvivalOrAdventure();
 	}
 	
 }

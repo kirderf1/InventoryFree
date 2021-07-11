@@ -1,10 +1,12 @@
 package kirderf1.inventoryfree;
 
+import kirderf1.inventoryfree.capability.LockedInvHandler;
 import kirderf1.inventoryfree.network.PacketHandler;
 import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.GameType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,7 +40,16 @@ public class PlayerData
 	
 	public static int getAvailableSlots(ServerPlayerEntity player)
 	{
-		return InventoryFree.getAvailableSlots(getUnlockedSlots(player));
+		if(InventoryFree.appliesTo(player))
+			return InventoryFree.getAvailableSlots(getUnlockedSlots(player));
+		else return 36;
+	}
+	
+	public static int getAvailableSlots(ServerPlayerEntity player, GameType gameMode)
+	{
+		if(InventoryFree.appliesTo(gameMode))
+			return InventoryFree.getAvailableSlots(getUnlockedSlots(player));
+		else return 36;
 	}
 	
 	public static int getUnlockedSlots(ServerPlayerEntity player)
@@ -51,12 +62,14 @@ public class PlayerData
 		CompoundNBT nbt = getOrCreatePersistentTag(player);
 		nbt.putInt("unlocked_slots", nbt.getInt("unlocked_slots") + amount);
 		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(nbt.getInt("unlocked_slots")));
+		LockedInvHandler.onLockChange(player);
 	}
 	
 	public static void setUnlockedSlots(ServerPlayerEntity player, int unlockedSlots)
 	{
 		getOrCreatePersistentTag(player).putInt("unlocked_slots", unlockedSlots);
 		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(unlockedSlots));
+		LockedInvHandler.onLockChange(player);
 	}
 	
 	public static CompoundNBT getPersistentTag(ServerPlayerEntity player)

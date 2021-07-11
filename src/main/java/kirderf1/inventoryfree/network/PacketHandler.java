@@ -25,6 +25,7 @@ public class PacketHandler
 			throw new IllegalStateException("Packets already registered!");
 		
 		register(UnlockedSlotsPacket.class, UnlockedSlotsPacket::decode);
+		register(LockedInvSyncPacket.class, LockedInvSyncPacket::decode);
 	}
 	
 	private static <T extends Packet> void register(Class<T> c, Function<PacketBuffer, T> decoder)

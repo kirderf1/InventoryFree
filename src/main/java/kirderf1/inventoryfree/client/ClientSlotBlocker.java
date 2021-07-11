@@ -33,6 +33,13 @@ public class ClientSlotBlocker
 	}
 	
 	@SubscribeEvent
+	public static void onRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
+	{
+		ClientPlayerEntity player = Objects.requireNonNull(event.getPlayer());
+		SlotBlocker.insertBlockedSlots(player.container, player, ClientData::getAvailableSlots);
+	}
+	
+	@SubscribeEvent
 	public static void onGuiOpened(GuiOpenEvent event)
 	{
 		if(event.getGui() instanceof ContainerScreen<?>)

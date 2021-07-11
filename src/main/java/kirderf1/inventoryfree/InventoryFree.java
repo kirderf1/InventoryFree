@@ -49,6 +49,7 @@ public class InventoryFree
 		public final ForgeConfigSpec.IntValue availableSlots;
 		public final ForgeConfigSpec.ConfigValue<String> unlockSlotItem;
 		public final ForgeConfigSpec.IntValue unlockedLostOnDeath;
+		public final ForgeConfigSpec.BooleanValue dropItemsInLockedSlots;
 		
 		private Config(ForgeConfigSpec.Builder builder)
 		{
@@ -59,6 +60,8 @@ public class InventoryFree
 					.define("unlockSlotItem", "");
 			unlockedLostOnDeath = builder.comment("The number of unlocked slots that are relocked on death. If 0, slots will be unaffected by death. If -1, all unlocked slots will be relocked.")
 					.defineInRange("unlockedLostOnDeath", 0, -1, 36);
+			dropItemsInLockedSlots = builder.comment("If true, items will be dropped when the slot they're in is locked. If false, the items will instead be moved to a locked inventory where they'll stay until the slot is unlocked again.")
+					.define("dropItemsInLockedSlots", false);
 			builder.pop();
 		}
 	}

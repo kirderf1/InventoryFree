@@ -35,9 +35,14 @@ public class LockedInvHandler
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		onLockChange((ServerPlayerEntity) event.getPlayer());
+		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
 		
-		sendLockedInv((ServerPlayerEntity) event.getPlayer());
+		onLockChange(player);
+		
+		if(InventoryFree.CONFIG.dropItemsInLockedSlots.get())
+			dropLockedInvItems(player);
+		
+		sendLockedInv(player);
 	}
 	
 	// Perform this early as it adds drops that should be on equal stance to the player inventory
@@ -105,6 +110,12 @@ public class LockedInvHandler
 	{
 		for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
 			onLockChange(player);
+		
+		if(InventoryFree.CONFIG.dropItemsInLockedSlots.get())
+		{
+			for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
+				dropLockedInvItems(player);
+		}
 	}
 	
 	/**
@@ -130,7 +141,7 @@ public class LockedInvHandler
 		{
 			if(slots > prevSlots)
 				onUnlockSlot(player, prevSlots, slots - 1);
-			else
+			if(slots < prevSlots && !InventoryFree.CONFIG.dropItemsInLockedSlots.get())
 				onLockSlot(player, slots, prevSlots - 1);
 			
 			PlayerData.getOrCreatePersistentTag(player).putInt("slot_cache", slots);
@@ -183,6 +194,21 @@ public class LockedInvHandler
 					else player.dropItem(stack, true, false);
 					changed = true;
 				}
+			}
+			if(changed)
+				sendLockedInv(player);
+		});
+	}
+	
+	private static void dropLockedInvItems(ServerPlayerEntity player)
+	{
+		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv ->
+		{
+			boolean changed = false;
+			for(ItemStack stack : lockedInv.getAndClearStacks())
+			{
+				player.dropItem(stack, true, false);
+				changed = true;
 			}
 			if(changed)
 				sendLockedInv(player);

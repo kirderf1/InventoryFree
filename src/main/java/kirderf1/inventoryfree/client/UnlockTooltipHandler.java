@@ -1,8 +1,8 @@
 package kirderf1.inventoryfree.client;
 
 import kirderf1.inventoryfree.SlotUnlocker;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +15,6 @@ public class UnlockTooltipHandler
 	public static void onTooltipEvent(ItemTooltipEvent event)
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
-			event.getToolTip().add(new StringTextComponent("Right-click in hand to consume and unlock an inventory slot!").mergeStyle(TextFormatting.AQUA));	//TODO translation key
+			event.getToolTip().add(new TranslationTextComponent("inventory_free.unlock.tooltip").mergeStyle(TextFormatting.AQUA));
 	}
 }

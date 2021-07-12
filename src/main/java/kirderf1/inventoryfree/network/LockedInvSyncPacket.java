@@ -2,8 +2,7 @@ package kirderf1.inventoryfree.network;
 
 import kirderf1.inventoryfree.capability.ILockedInventory;
 import kirderf1.inventoryfree.capability.ModCapabilities;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import kirderf1.inventoryfree.client.ClientCapabilityHandler;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.network.PacketBuffer;
@@ -47,10 +46,12 @@ public class LockedInvSyncPacket implements Packet.ToClient
 	{
 		if(nbt != null)
 		{
-			PlayerEntity player = Minecraft.getInstance().player;
-			if(player != null)
-				player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv ->
-						ModCapabilities.LOCKED_INV_CAPABILITY.readNBT(lockedInv, null, nbt));
+			ClientCapabilityHandler.handleLockedInvPacket(this);
 		} else LOGGER.warn("InventoryFree got sync packet with invalid data");
+	}
+	
+	public INBT getNbt()
+	{
+		return nbt;
 	}
 }

@@ -15,7 +15,6 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -73,13 +72,7 @@ public class LockedInvHandler
 		copyOverCap(event.getOriginal(), event.getPlayer());
 	}
 	
-	@SubscribeEvent
-	public static void onClientRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
-	{
-		copyOverCap(event.getOldPlayer(), event.getNewPlayer());
-	}
-	
-	private static void copyOverCap(PlayerEntity oldPlayer, PlayerEntity newPlayer)
+	public static void copyOverCap(PlayerEntity oldPlayer, PlayerEntity newPlayer)
 	{
 		oldPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(oldInv ->
 				newPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(newInv -> {

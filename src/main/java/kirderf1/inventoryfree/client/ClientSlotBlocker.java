@@ -29,14 +29,14 @@ public class ClientSlotBlocker
 	public static void onLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
 	{
 		ClientPlayerEntity player = Objects.requireNonNull(event.getPlayer());
-		SlotBlocker.insertBlockedSlots(player.container, player, ClientData::getAvailableSlots);
+		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
 	public static void onRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
 	{
 		ClientPlayerEntity player = Objects.requireNonNull(event.getPlayer());
-		SlotBlocker.insertBlockedSlots(player.container, player, ClientData::getAvailableSlots);
+		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
@@ -46,7 +46,7 @@ public class ClientSlotBlocker
 		{
 			LOGGER.debug("Container screen being opened. Inserting custom inventory slots...");
 			ContainerScreen<?> screen = (ContainerScreen<?>) event.getGui();
-			SlotBlocker.insertBlockedSlots(screen.getContainer(), Minecraft.getInstance().player, ClientData::getAvailableSlots);
+			SlotBlocker.insertBlockedSlots(screen.getMenu(), Minecraft.getInstance().player, ClientData::getAvailableSlots);
 		}
 	}
 	

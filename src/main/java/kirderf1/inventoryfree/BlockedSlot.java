@@ -16,25 +16,25 @@ public class BlockedSlot extends Slot
 	
 	public BlockedSlot(Slot slot, BooleanSupplier blockCondition)
 	{
-		super(slot.inventory, slot.getSlotIndex(), slot.xPos, slot.yPos);
-		this.slotNumber = slot.slotNumber;
+		super(slot.container, slot.getSlotIndex(), slot.x, slot.y);
+		this.index = slot.index;
 		this.blockCondition = blockCondition;
 	}
 	
 	@Override
-	public boolean isEnabled()
+	public boolean isActive()
 	{
 		return !blockCondition.getAsBoolean();
 	}
 	
 	@Override
-	public boolean isItemValid(ItemStack stack)
+	public boolean mayPlace(ItemStack stack)
 	{
 		return !blockCondition.getAsBoolean();
 	}
 	
 	@Override
-	public boolean canTakeStack(PlayerEntity playerIn)
+	public boolean mayPickup(PlayerEntity playerIn)
 	{
 		return !blockCondition.getAsBoolean();
 	}

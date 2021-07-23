@@ -71,7 +71,7 @@ public class LockedInventory implements ILockedInventory
 				{
 					CompoundNBT itemTag = new CompoundNBT();
 					itemTag.putInt("Slot", i);
-					stack.write(itemTag);
+					stack.save(itemTag);
 					list.add(itemTag);
 				}
 			}
@@ -92,7 +92,7 @@ public class LockedInventory implements ILockedInventory
 					int slot = itemTag.getInt("Slot");
 					
 					if(slot >= 0 && slot < 36)
-						instance.putStack(slot, ItemStack.read(itemTag));
+						instance.putStack(slot, ItemStack.of(itemTag));
 				}
 			} else throw new IllegalArgumentException("Expected a ListNBT, but got " + nbt.getClass());
 		}

@@ -49,7 +49,7 @@ public class LockedInvHandler
 	public static void onDrops(LivingDropsEvent event)
 	{
 		LivingEntity entity = event.getEntityLiving();
-		if(entity instanceof ServerPlayerEntity && !entity.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY))
+		if(entity instanceof ServerPlayerEntity && !entity.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
 		{
 			ServerPlayerEntity player = (ServerPlayerEntity) entity;
 			player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
@@ -58,7 +58,7 @@ public class LockedInvHandler
 				lockedInv.getAndClearStacks().forEach(stack -> {
 					// Only add droppable items
 					if(!stack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(stack))
-						player.dropItem(stack, true, false);
+						player.drop(stack, true, false);
 				});
 				player.captureDrops(oldCapture);
 				sendLockedInv(player);
@@ -160,7 +160,7 @@ public class LockedInvHandler
 			{
 				if(lockedInv.getStack(slot).isEmpty())
 				{
-					ItemStack stack = player.inventory.removeStackFromSlot(slot);
+					ItemStack stack = player.inventory.removeItemNoUpdate(slot);
 					lockedInv.putStack(slot, stack);
 					changed |= !stack.isEmpty();
 				}
@@ -182,9 +182,9 @@ public class LockedInvHandler
 				ItemStack stack = lockedInv.takeStack(slot);
 				if(!stack.isEmpty())
 				{
-					if(player.inventory.getStackInSlot(slot).isEmpty())
-						player.inventory.setInventorySlotContents(slot, stack);
-					else player.dropItem(stack, true, false);
+					if(player.inventory.getItem(slot).isEmpty())
+						player.inventory.setItem(slot, stack);
+					else player.drop(stack, true, false);
 					changed = true;
 				}
 			}
@@ -200,7 +200,7 @@ public class LockedInvHandler
 			boolean changed = false;
 			for(ItemStack stack : lockedInv.getAndClearStacks())
 			{
-				player.dropItem(stack, true, false);
+				player.drop(stack, true, false);
 				changed = true;
 			}
 			if(changed)

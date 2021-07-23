@@ -76,7 +76,7 @@ public class InventoryFree
 	{
 		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if(server != null)
-			server.runAsync(() -> LockedInvHandler.onConfigReload(server));
+			server.submit(() -> LockedInvHandler.onConfigReload(server));
 	}
 	
 	public static void onRegisterCommands(RegisterCommandsEvent event)
@@ -100,7 +100,7 @@ public class InventoryFree
 	
 	public static boolean appliesTo(GameType gameMode)
 	{
-		return gameMode.isSurvivalOrAdventure();
+		return gameMode.isSurvival();
 	}
 	
 }

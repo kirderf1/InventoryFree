@@ -32,7 +32,7 @@ public class InventoryEnforcer
 			int availableSlots = PlayerData.getAvailableSlots((ServerPlayerEntity) event.player);
 			
 			int counter = 0;
-			for(int index = 0; index < inventory.getSizeInventory(); index++)
+			for(int index = 0; index < inventory.getContainerSize(); index++)
 			{
 				if(enforceSlot(index, inventory, availableSlots))
 					counter++;
@@ -56,15 +56,15 @@ public class InventoryEnforcer
 	
 	private static boolean enforceSlot(int index, PlayerInventory inventory, int availableSlots)
 	{
-		ItemStack stack = inventory.getStackInSlot(index);
+		ItemStack stack = inventory.getItem(index);
 		if(InventoryFree.isSlotToBeBlocked(index, availableSlots) && !stack.isEmpty())
 		{
 			int freeIndex = findAvailableSlot(inventory, availableSlots);
-			inventory.removeStackFromSlot(index);
+			inventory.removeItemNoUpdate(index);
 			if(freeIndex < 0)
-				inventory.player.dropItem(stack, true, false);
+				inventory.player.drop(stack, true, false);
 			else
-				inventory.setInventorySlotContents(freeIndex, stack);
+				inventory.setItem(freeIndex, stack);
 			return true;
 		}
 		return false;
@@ -76,15 +76,15 @@ public class InventoryEnforcer
 			return true;
 		if(stack.isDamaged())
 			return false;
-		int index = inventory.storeItemStack(stack);
+		int index = inventory.getSlotWithRemainingSpace(stack);
 		return index >= 0 && !InventoryFree.isSlotToBeBlocked(index, availableSlots);
 	}
 	
 	private static int findAvailableSlot(PlayerInventory inventory, int availableSlots)
 	{
-		for(int index = 0; index < inventory.mainInventory.size(); index++)
+		for(int index = 0; index < inventory.items.size(); index++)
 		{
-			if(!InventoryFree.isSlotToBeBlocked(index, availableSlots) && inventory.getStackInSlot(index).isEmpty())
+			if(!InventoryFree.isSlotToBeBlocked(index, availableSlots) && inventory.getItem(index).isEmpty())
 				return index;
 		}
 		return -1;

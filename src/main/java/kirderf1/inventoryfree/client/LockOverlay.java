@@ -51,26 +51,26 @@ public class LockOverlay extends Widget
 		RenderSystem.enableDepthTest();
 		getCachedLockedInv(mc).ifPresent(lockedInv -> {
 			// Draw items in locked slots from the locked inventory
-			for(Slot slot : screen.getContainer().inventorySlots)
+			for(Slot slot : screen.getMenu().slots)
 			{
-				if(slot instanceof BlockedSlot && !slot.isEnabled())
+				if(slot instanceof BlockedSlot && !slot.isActive())
 				{
 					drawItem(lockedInv.getStack(slot.getSlotIndex()), mc,
-							screen.getGuiLeft() + slot.xPos, screen.getGuiTop() + slot.yPos);
+							screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y);
 				}
 			}
 		});
 		
 		
-		mc.getTextureManager().bindTexture(LOCK);
+		mc.getTextureManager().bind(LOCK);
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
 		
 		// Draw lock textures on locked slots
-		for(Slot slot : screen.getContainer().inventorySlots)
+		for(Slot slot : screen.getMenu().slots)
 		{
-			if(slot instanceof BlockedSlot && !slot.isEnabled())
+			if(slot instanceof BlockedSlot && !slot.isActive())
 			{
-				blit(matrixStack, screen.getGuiLeft() + slot.xPos, screen.getGuiTop() + slot.yPos, getBlitOffset() + LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+				blit(matrixStack, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, getBlitOffset() + LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}
@@ -85,15 +85,15 @@ public class LockOverlay extends Widget
 				return;
 			
 			
-			int scaledWidth = mc.getMainWindow().getScaledWidth();
-			int scaledHeight = mc.getMainWindow().getScaledHeight();
+			int scaledWidth = mc.getWindow().getGuiScaledWidth();
+			int scaledHeight = mc.getWindow().getGuiScaledHeight();
 			
 			RenderSystem.enableDepthTest();
 			getCachedLockedInv(mc).ifPresent(lockedInv -> {
 				// Draw items in locked slots from the locked inventory
-				for(Slot slot : mc.player.container.inventorySlots)
+				for(Slot slot : mc.player.inventoryMenu.slots)
 				{
-					if(slot.getSlotIndex() < 9 && slot instanceof BlockedSlot && !slot.isEnabled())
+					if(slot.getSlotIndex() < 9 && slot instanceof BlockedSlot && !slot.isActive())
 					{
 						int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 						int y = (scaledHeight - 16) - 3;
@@ -102,14 +102,14 @@ public class LockOverlay extends Widget
 				}
 			});
 			
-			mc.getTextureManager().bindTexture(LOCK);
+			mc.getTextureManager().bind(LOCK);
 			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			
-			for(Slot slot : mc.player.container.inventorySlots)
+			for(Slot slot : mc.player.inventoryMenu.slots)
 			{
-				if(slot.getSlotIndex() < 9 && slot instanceof BlockedSlot && !slot.isEnabled())
+				if(slot.getSlotIndex() < 9 && slot instanceof BlockedSlot && !slot.isActive())
 				{
 					int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 					int y = (scaledHeight - 16) - 3;
@@ -125,9 +125,9 @@ public class LockOverlay extends Widget
 		{
 			FontRenderer font = stack.getItem().getFontRenderer(stack);
 			if(font == null)
-				font = mc.fontRenderer;
-			mc.getItemRenderer().renderItemAndEffectIntoGUI(stack, x, y);
-			mc.getItemRenderer().renderItemOverlayIntoGUI(font, stack, x, y, null);
+				font = mc.font;
+			mc.getItemRenderer().renderAndDecorateItem(stack, x, y);
+			mc.getItemRenderer().renderGuiItemDecorations(font, stack, x, y, null);
 		}
 	}
 	

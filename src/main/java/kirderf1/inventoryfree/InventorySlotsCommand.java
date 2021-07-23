@@ -15,7 +15,7 @@ public class InventorySlotsCommand
 {
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
-		dispatcher.register(Commands.literal("inventory_slots").requires(source -> source.hasPermissionLevel(2))
+		dispatcher.register(Commands.literal("inventory_slots").requires(source -> source.hasPermission(2))
 				.then(setAvailable()).then(setUnlocked()).then(unlock()).then(lock()).then(clear()).then(get()));
 	}
 	
@@ -72,21 +72,21 @@ public class InventorySlotsCommand
 	private static int setUnlockedFor(CommandSource source, Collection<ServerPlayerEntity> targets, int unlockedSlots)
 	{
 		targets.forEach(player -> PlayerData.setUnlockedSlots(player, unlockedSlots));
-		source.sendFeedback(new StringTextComponent("Set unlocked slots for "+targets.size()+" players"), true);
+		source.sendSuccess(new StringTextComponent("Set unlocked slots for "+targets.size()+" players"), true);
 		return targets.size();
 	}
 	
 	private static int addUnlockedFor(CommandSource source, Collection<ServerPlayerEntity> targets, int addedSlots)
 	{
 		targets.forEach(player -> PlayerData.unlockSlots(player, addedSlots));
-		source.sendFeedback(new StringTextComponent("Changed unlocked slots for "+targets.size()+" players"), true);
+		source.sendSuccess(new StringTextComponent("Changed unlocked slots for "+targets.size()+" players"), true);
 		return targets.size();
 	}
 	
 	private static int getFor(CommandSource source, ServerPlayerEntity target)
 	{
-		source.sendFeedback(new StringTextComponent("Unlocked slots: "+PlayerData.getUnlockedSlots(target)), false);
-		source.sendFeedback(new StringTextComponent("Available slots: "+PlayerData.getAvailableSlots(target)), false);
+		source.sendSuccess(new StringTextComponent("Unlocked slots: "+PlayerData.getUnlockedSlots(target)), false);
+		source.sendSuccess(new StringTextComponent("Available slots: "+PlayerData.getAvailableSlots(target)), false);
 		return 1;
 	}
 }

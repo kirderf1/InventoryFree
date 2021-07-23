@@ -37,7 +37,7 @@ public class SlotBlocker
 	{
 		LOGGER.debug("Player logged in. Inserting custom inventory slots into the inventory container...");
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		insertBlockedSlots(player.container, player, () -> PlayerData.getAvailableSlots(player));
+		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
 	@SubscribeEvent
@@ -45,12 +45,12 @@ public class SlotBlocker
 	{
 		LOGGER.debug("Player entity being cloned. Inserting custom inventory slots into the inventory container...");
 		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
-		insertBlockedSlots(player.container, player, () -> PlayerData.getAvailableSlots(player));
+		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
 	public static void insertBlockedSlots(Container container, PlayerEntity player, Supplier<Integer> availableSlots)
 	{
-		List<Slot> slots = container.inventorySlots;
+		List<Slot> slots = container.slots;
 		for(int index = 0; index < slots.size(); index++)
 		{
 			Slot slot = slots.get(index);
@@ -66,6 +66,6 @@ public class SlotBlocker
 	
 	private static boolean shouldReplaceSlot(Slot slot, PlayerInventory playerInv)
 	{
-		return slot.inventory == playerInv && slot.getSlotIndex() < 36;
+		return slot.container == playerInv && slot.getSlotIndex() < 36;
 	}
 }

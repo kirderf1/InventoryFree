@@ -29,7 +29,7 @@ public class LockedInvSyncPacket implements Packet.ToClient
 	
 	public static LockedInvSyncPacket decode(PacketBuffer buffer)
 	{
-		CompoundNBT compound = buffer.readCompoundTag();
+		CompoundNBT compound = buffer.readNbt();
 		return new LockedInvSyncPacket(compound != null ? compound.get("nbt") : null);
 	}
 	
@@ -38,7 +38,7 @@ public class LockedInvSyncPacket implements Packet.ToClient
 	{
 		CompoundNBT compound = new CompoundNBT();
 		compound.put("nbt", nbt);
-		buffer.writeCompoundTag(compound);
+		buffer.writeNbt(compound);
 	}
 	
 	@Override

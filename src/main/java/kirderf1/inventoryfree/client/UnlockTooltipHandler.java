@@ -15,6 +15,6 @@ public class UnlockTooltipHandler
 	public static void onTooltipEvent(ItemTooltipEvent event)
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
-			event.getToolTip().add(new TranslationTextComponent("inventory_free.unlock.tooltip").mergeStyle(TextFormatting.AQUA));
+			event.getToolTip().add(new TranslationTextComponent("inventory_free.unlock.tooltip").withStyle(TextFormatting.AQUA));
 	}
 }

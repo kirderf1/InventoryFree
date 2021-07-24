@@ -1,7 +1,7 @@
 package kirderf1.inventoryfree.network;
 
 import kirderf1.inventoryfree.client.ClientData;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class UnlockedSlotsPacket implements Packet.ToClient
 {
@@ -12,13 +12,13 @@ public class UnlockedSlotsPacket implements Packet.ToClient
 		this.unlockedSlots = unlockedSlots;
 	}
 	
-	public static UnlockedSlotsPacket decode(PacketBuffer buffer)
+	public static UnlockedSlotsPacket decode(FriendlyByteBuf buffer)
 	{
 		return new UnlockedSlotsPacket(buffer.readInt());
 	}
 	
 	@Override
-	public void encode(PacketBuffer buffer)
+	public void encode(FriendlyByteBuf buffer)
 	{
 		buffer.writeInt(unlockedSlots);
 	}

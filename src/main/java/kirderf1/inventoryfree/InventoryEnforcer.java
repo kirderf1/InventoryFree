@@ -1,8 +1,8 @@
 package kirderf1.inventoryfree;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,8 +28,8 @@ public class InventoryEnforcer
 		
 		if(InventoryFree.appliesTo(event.player))
 		{
-			PlayerInventory inventory = event.player.inventory;
-			int availableSlots = PlayerData.getAvailableSlots((ServerPlayerEntity) event.player);
+			Inventory inventory = event.player.getInventory();
+			int availableSlots = PlayerData.getAvailableSlots((ServerPlayer) event.player);
 			
 			int counter = 0;
 			for(int index = 0; index < inventory.getContainerSize(); index++)
@@ -48,13 +48,13 @@ public class InventoryEnforcer
 	{
 		if(InventoryFree.appliesTo(event.getPlayer()))
 		{
-			if(!canStoreItem(event.getPlayer().inventory, event.getItem().getItem(),
-					PlayerData.getAvailableSlots((ServerPlayerEntity) event.getPlayer())))
+			if(!canStoreItem(event.getPlayer().getInventory(), event.getItem().getItem(),
+					PlayerData.getAvailableSlots((ServerPlayer) event.getPlayer())))
 				event.setCanceled(true);
 		}
 	}
 	
-	private static boolean enforceSlot(int index, PlayerInventory inventory, int availableSlots)
+	private static boolean enforceSlot(int index, Inventory inventory, int availableSlots)
 	{
 		ItemStack stack = inventory.getItem(index);
 		if(InventoryFree.isSlotToBeBlocked(index, availableSlots) && !stack.isEmpty())
@@ -70,7 +70,7 @@ public class InventoryEnforcer
 		return false;
 	}
 	
-	private static boolean canStoreItem(PlayerInventory inventory, ItemStack stack, int availableSlots)
+	private static boolean canStoreItem(Inventory inventory, ItemStack stack, int availableSlots)
 	{
 		if(findAvailableSlot(inventory, availableSlots) != -1)
 			return true;
@@ -80,7 +80,7 @@ public class InventoryEnforcer
 		return index >= 0 && !InventoryFree.isSlotToBeBlocked(index, availableSlots);
 	}
 	
-	private static int findAvailableSlot(PlayerInventory inventory, int availableSlots)
+	private static int findAvailableSlot(Inventory inventory, int availableSlots)
 	{
 		for(int index = 0; index < inventory.items.size(); index++)
 		{

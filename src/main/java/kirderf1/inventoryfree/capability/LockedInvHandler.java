@@ -4,24 +4,24 @@ import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.PlayerData;
 import kirderf1.inventoryfree.network.LockedInvSyncPacket;
 import kirderf1.inventoryfree.network.PacketHandler;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameRules;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import java.util.Collection;
 
@@ -34,7 +34,7 @@ public class LockedInvHandler
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		
 		onLockChange(player);
 		
@@ -49,9 +49,9 @@ public class LockedInvHandler
 	public static void onDrops(LivingDropsEvent event)
 	{
 		LivingEntity entity = event.getEntityLiving();
-		if(entity instanceof ServerPlayerEntity && !entity.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+		if(entity instanceof ServerPlayer player
+				&& !entity.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
 		{
-			ServerPlayerEntity player = (ServerPlayerEntity) entity;
 			player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
 				// Add drops from capability
 				Collection<ItemEntity> oldCapture = player.captureDrops(event.getDrops());
@@ -72,13 +72,13 @@ public class LockedInvHandler
 		copyOverCap(event.getOriginal(), event.getPlayer());
 	}
 	
-	public static void copyOverCap(PlayerEntity oldPlayer, PlayerEntity newPlayer)
+	public static void copyOverCap(Player oldPlayer, Player newPlayer)
 	{
 		oldPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(oldInv ->
 				newPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(newInv -> {
 					
-					INBT nbt = ModCapabilities.LOCKED_INV_CAPABILITY.writeNBT(oldInv, null);
-					ModCapabilities.LOCKED_INV_CAPABILITY.readNBT(newInv, null, nbt);
+					ListTag nbt = oldInv.serializeNBT();
+					newInv.deserializeNBT(nbt);
 				})
 		);
 	}
@@ -86,13 +86,13 @@ public class LockedInvHandler
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
 	{
-		sendLockedInv((ServerPlayerEntity) event.getPlayer());
+		sendLockedInv((ServerPlayer) event.getPlayer());
 	}
 	
 	@SubscribeEvent
-	public static void onGamemodeChange(PlayerEvent.PlayerChangeGameModeEvent event)
+	public static void onGameModeChange(PlayerEvent.PlayerChangeGameModeEvent event)
 	{
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		onLockChange(player, PlayerData.getAvailableSlots(player, event.getNewGameMode()));
 	}
 	
@@ -101,12 +101,12 @@ public class LockedInvHandler
 	 */
 	public static void onConfigReload(MinecraftServer server)
 	{
-		for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
+		for(ServerPlayer player : server.getPlayerList().getPlayers())
 			onLockChange(player);
 		
 		if(InventoryFree.CONFIG.dropItemsInLockedSlots.get())
 		{
-			for(ServerPlayerEntity player : server.getPlayerList().getPlayers())
+			for(ServerPlayer player : server.getPlayerList().getPlayers())
 				dropLockedInvItems(player);
 		}
 	}
@@ -116,18 +116,18 @@ public class LockedInvHandler
 	 * This function should then move items between the ILockedInventory and the player inventory when relevant.
 	 * Should be called when:
 	 * - Number of unlocked slots change for a player
-	 * - Slot locking starts/stops being applied to a player (gamemode changes)
+	 * - Slot locking starts/stops being applied to a player (game mode changes)
 	 * - Config value might've changed
 	 *   - On config reload, for all online players
 	 *   - On player login, to cover those that might've not been online on config reload
 	 */
-	public static void onLockChange(ServerPlayerEntity player)
+	public static void onLockChange(ServerPlayer player)
 	{
 		onLockChange(player,  PlayerData.getAvailableSlots(player));
 	}
 	
 	// Slots provided as an argument for situations where this is called during an event before the player state has properly updated
-	public static void onLockChange(ServerPlayerEntity player, int slots)
+	public static void onLockChange(ServerPlayer player, int slots)
 	{
 		int prevSlots = getPrevAvailableSlots(player);
 		if(slots != prevSlots)
@@ -141,18 +141,18 @@ public class LockedInvHandler
 		}
 	}
 	
-	private static int getPrevAvailableSlots(ServerPlayerEntity player)
+	private static int getPrevAvailableSlots(ServerPlayer player)
 	{
-		CompoundNBT nbt = PlayerData.getPersistentTag(player);
+		CompoundTag nbt = PlayerData.getPersistentTag(player);
 		return nbt.contains("slot_cache", Constants.NBT.TAG_ANY_NUMERIC)
-				? MathHelper.clamp(nbt.getInt("slot_cache"), 0, 36)
+				? Mth.clamp(nbt.getInt("slot_cache"), 0, 36)
 				: 36;
 	}
 	
 	/**
 	 * Called when slots have been locked. Moves items in those slots to the ILockedInventory
 	 */
-	private static void onLockSlot(ServerPlayerEntity player, int slotMin, int slotMax)
+	private static void onLockSlot(ServerPlayer player, int slotMin, int slotMax)
 	{
 		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
 			boolean changed = false;
@@ -160,7 +160,7 @@ public class LockedInvHandler
 			{
 				if(lockedInv.getStack(slot).isEmpty())
 				{
-					ItemStack stack = player.inventory.removeItemNoUpdate(slot);
+					ItemStack stack = player.getInventory().removeItemNoUpdate(slot);
 					lockedInv.putStack(slot, stack);
 					changed |= !stack.isEmpty();
 				}
@@ -173,7 +173,7 @@ public class LockedInvHandler
 	/**
 	 * Called when slots have been unlocked. Moves items from the ILockedInventory to those slots
 	 */
-	private static void onUnlockSlot(ServerPlayerEntity player, int slotMin, int slotMax)
+	private static void onUnlockSlot(ServerPlayer player, int slotMin, int slotMax)
 	{
 		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
 			boolean changed = false;
@@ -182,8 +182,8 @@ public class LockedInvHandler
 				ItemStack stack = lockedInv.takeStack(slot);
 				if(!stack.isEmpty())
 				{
-					if(player.inventory.getItem(slot).isEmpty())
-						player.inventory.setItem(slot, stack);
+					if(player.getInventory().getItem(slot).isEmpty())
+						player.getInventory().setItem(slot, stack);
 					else player.drop(stack, true, false);
 					changed = true;
 				}
@@ -193,7 +193,7 @@ public class LockedInvHandler
 		});
 	}
 	
-	private static void dropLockedInvItems(ServerPlayerEntity player)
+	private static void dropLockedInvItems(ServerPlayer player)
 	{
 		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv ->
 		{
@@ -208,7 +208,7 @@ public class LockedInvHandler
 		});
 	}
 	
-	public static void sendLockedInv(ServerPlayerEntity player)
+	public static void sendLockedInv(ServerPlayer player)
 	{
 		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv ->
 				PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), LockedInvSyncPacket.makePacket(lockedInv)));

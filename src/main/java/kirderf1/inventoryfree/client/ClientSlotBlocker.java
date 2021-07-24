@@ -3,8 +3,8 @@ package kirderf1.inventoryfree.client;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.SlotBlocker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -28,24 +28,23 @@ public class ClientSlotBlocker
 	@SubscribeEvent
 	public static void onLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
 	{
-		ClientPlayerEntity player = Objects.requireNonNull(event.getPlayer());
+		LocalPlayer player = Objects.requireNonNull(event.getPlayer());
 		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
 	public static void onRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
 	{
-		ClientPlayerEntity player = Objects.requireNonNull(event.getPlayer());
+		LocalPlayer player = Objects.requireNonNull(event.getPlayer());
 		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
 	public static void onGuiOpened(GuiOpenEvent event)
 	{
-		if(event.getGui() instanceof ContainerScreen<?>)
+		if(event.getGui() instanceof AbstractContainerScreen<?> screen)
 		{
 			LOGGER.debug("Container screen being opened. Inserting custom inventory slots...");
-			ContainerScreen<?> screen = (ContainerScreen<?>) event.getGui();
 			SlotBlocker.insertBlockedSlots(screen.getMenu(), Minecraft.getInstance().player, ClientData::getAvailableSlots);
 		}
 	}
@@ -53,9 +52,9 @@ public class ClientSlotBlocker
 	@SubscribeEvent
 	public static void onGuiInitialized(GuiScreenEvent.InitGuiEvent event)
 	{
-		if(event.getGui() instanceof ContainerScreen<?>)
+		if(event.getGui() instanceof AbstractContainerScreen<?> screen)
 		{
-			event.addWidget(new LockOverlay((ContainerScreen<?>) event.getGui()));
+			event.addWidget(new LockOverlay(screen));
 		}
 	}
 }

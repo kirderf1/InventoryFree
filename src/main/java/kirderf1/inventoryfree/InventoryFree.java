@@ -3,19 +3,20 @@ package kirderf1.inventoryfree;
 import kirderf1.inventoryfree.capability.LockedInvHandler;
 import kirderf1.inventoryfree.capability.ModCapabilities;
 import kirderf1.inventoryfree.network.PacketHandler;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.GameType;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -72,7 +73,7 @@ public class InventoryFree
 		ModCapabilities.register();
 	}
 	
-	public static void onConfigReload(ModConfig.Reloading event)
+	public static void onConfigReload(ModConfigEvent.Reloading event)
 	{
 		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if(server != null)
@@ -86,14 +87,14 @@ public class InventoryFree
 	
 	public static int getAvailableSlots(int unlockedSlots)
 	{
-		return MathHelper.clamp(InventoryFree.CONFIG.availableSlots.get() + unlockedSlots, 1, 36);
+		return Mth.clamp(InventoryFree.CONFIG.availableSlots.get() + unlockedSlots, 1, 36);
 	}
 	public static boolean isSlotToBeBlocked(int index, int availableSlots)
 	{
 		return index >= availableSlots && index < 36;
 	}
 	
-	public static boolean appliesTo(PlayerEntity player)
+	public static boolean appliesTo(Player player)
 	{
 		return player != null && !player.isCreative() && !player.isSpectator();
 	}

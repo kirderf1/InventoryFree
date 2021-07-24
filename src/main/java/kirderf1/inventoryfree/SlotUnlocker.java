@@ -1,10 +1,10 @@
 package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.client.ClientData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -41,15 +41,15 @@ public class SlotUnlocker
 	{
 		ItemStack stack = event.getItemStack();
 		int unlockedSlots = event.getSide() == LogicalSide.CLIENT ? ClientData.getUnlockedSlots()
-				: PlayerData.getUnlockedSlots((ServerPlayerEntity) event.getPlayer());
+				: PlayerData.getUnlockedSlots((ServerPlayer) event.getPlayer());
 		
 		if(shouldUnlockWith(stack, unlockedSlots))
 		{
 			event.setCanceled(true);
-			event.setCancellationResult(ActionResultType.SUCCESS);
+			event.setCancellationResult(InteractionResult.SUCCESS);
 			stack.shrink(1);
 			if(event.getSide() == LogicalSide.SERVER)
-				PlayerData.unlockSlots((ServerPlayerEntity) event.getPlayer(), 1);
+				PlayerData.unlockSlots((ServerPlayer) event.getPlayer(), 1);
 		}
 	}
 	

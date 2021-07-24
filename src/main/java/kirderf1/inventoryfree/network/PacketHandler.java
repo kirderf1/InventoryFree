@@ -1,10 +1,10 @@
 package kirderf1.inventoryfree.network;
 
 import kirderf1.inventoryfree.InventoryFree;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 
 import java.util.function.Function;
 
@@ -28,7 +28,7 @@ public class PacketHandler
 		register(LockedInvSyncPacket.class, LockedInvSyncPacket::decode);
 	}
 	
-	private static <T extends Packet> void register(Class<T> c, Function<PacketBuffer, T> decoder)
+	private static <T extends Packet> void register(Class<T> c, Function<FriendlyByteBuf, T> decoder)
 	{
 		INSTANCE.registerMessage(id++, c, Packet::encode, decoder, Packet::consume);
 	}

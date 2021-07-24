@@ -1,11 +1,11 @@
 package kirderf1.inventoryfree.capability;
 
 import kirderf1.inventoryfree.InventoryFree;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -34,13 +34,13 @@ public class ModCapabilities
 	
 	public static void register()
 	{
-		CapabilityManager.INSTANCE.register(ILockedInventory.class, new LockedInventory.Storage(), LockedInventory::new);
+		CapabilityManager.INSTANCE.register(ILockedInventory.class);
 	}
 	
 	@SubscribeEvent
 	public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> event)
 	{
-		if(event.getObject() instanceof PlayerEntity)
+		if(event.getObject() instanceof Player)
 		{
 			LockedInvProvider provider = new LockedInvProvider();
 			event.addCapability(LOCKED_INV_NAME, provider);
@@ -51,9 +51,9 @@ public class ModCapabilities
 	/**
 	 * Basic capability provider for providing and serializing a LockedInventory
 	 */
-	private static class LockedInvProvider implements ICapabilitySerializable<ListNBT>
+	private static class LockedInvProvider implements ICapabilitySerializable<ListTag>
 	{
-		private final ILockedInventory lockedInv = new LockedInventory();
+		private final LockedInventory lockedInv = new LockedInventory();
 		private final LazyOptional<ILockedInventory> optional = LazyOptional.of(() -> lockedInv);
 		
 		@Nonnull
@@ -66,15 +66,15 @@ public class ModCapabilities
 		}
 		
 		@Override
-		public ListNBT serializeNBT()
+		public ListTag serializeNBT()
 		{
-			return (ListNBT) LOCKED_INV_CAPABILITY.writeNBT(lockedInv, null);
+			return lockedInv.serializeNBT();
 		}
 		
 		@Override
-		public void deserializeNBT(ListNBT nbt)
+		public void deserializeNBT(ListTag nbt)
 		{
-			LOCKED_INV_CAPABILITY.readNBT(lockedInv, null, nbt);
+			lockedInv.deserializeNBT(nbt);
 		}
 	}
 }

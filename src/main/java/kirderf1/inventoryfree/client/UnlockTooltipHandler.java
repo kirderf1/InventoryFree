@@ -1,8 +1,8 @@
 package kirderf1.inventoryfree.client;
 
 import kirderf1.inventoryfree.SlotUnlocker;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,6 +15,6 @@ public class UnlockTooltipHandler
 	public static void onTooltipEvent(ItemTooltipEvent event)
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
-			event.getToolTip().add(new TranslationTextComponent("inventory_free.unlock.tooltip").withStyle(TextFormatting.AQUA));
+			event.getToolTip().add(new TranslatableComponent("inventory_free.unlock.tooltip").withStyle(ChatFormatting.AQUA));
 	}
 }

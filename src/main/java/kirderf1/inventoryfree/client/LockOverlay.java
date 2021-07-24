@@ -1,22 +1,24 @@
 package kirderf1.inventoryfree.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import kirderf1.inventoryfree.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.capability.ILockedInventory;
 import kirderf1.inventoryfree.capability.ModCapabilities;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,23 +28,23 @@ import net.minecraftforge.fml.common.Mod;
  * It is also responsible for drawing the icon on the overlay hotbar when appropriate.
  */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
-public class LockOverlay extends Widget
+public class LockOverlay extends AbstractWidget
 {
 	private static final ResourceLocation LOCK = new ResourceLocation(InventoryFree.MOD_ID, "textures/item/lock.png");
 	
 	private static final int LOCK_BLIT = 200;
 	
-	private final ContainerScreen<?> screen;
+	private final AbstractContainerScreen<?> screen;
 	private static LazyOptional<ILockedInventory> cachedLockedInv = LazyOptional.empty();
 	
-	public LockOverlay(ContainerScreen<?> screen)
+	public LockOverlay(AbstractContainerScreen<?> screen)
 	{
-		super(0, 0, 0, 0, StringTextComponent.EMPTY);
+		super(0, 0, 0, 0, TextComponent.EMPTY);
 		this.screen = screen;
 	}
 	
 	@Override
-	public void renderButton(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+	public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
 	{
 		Minecraft mc = Minecraft.getInstance();
 		if(!InventoryFree.appliesTo(mc.player))
@@ -61,9 +63,9 @@ public class LockOverlay extends Widget
 			}
 		});
 		
-		
-		mc.getTextureManager().bind(LOCK);
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderTexture(0, LOCK);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
 		
 		// Draw lock textures on locked slots
 		for(Slot slot : screen.getMenu().slots)
@@ -76,9 +78,9 @@ public class LockOverlay extends Widget
 	}
 	
 	@SubscribeEvent
-	public static void onHotbarOverlay(RenderGameOverlayEvent.Post event)
+	public static void onHotbarOverlay(RenderGameOverlayEvent.PostLayer event)
 	{
-		if(event.getType() == RenderGameOverlayEvent.ElementType.HOTBAR)
+		if(event.getOverlay() == ForgeIngameGui.HOTBAR_ELEMENT)
 		{
 			Minecraft mc = Minecraft.getInstance();
 			if(!InventoryFree.appliesTo(mc.player) || ClientData.getAvailableSlots() >= 9)
@@ -102,8 +104,9 @@ public class LockOverlay extends Widget
 				}
 			});
 			
-			mc.getTextureManager().bind(LOCK);
-			RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+			RenderSystem.setShaderTexture(0, LOCK);
+			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			
@@ -123,17 +126,14 @@ public class LockOverlay extends Widget
 	{
 		if(!stack.isEmpty())
 		{
-			FontRenderer font = stack.getItem().getFontRenderer(stack);
-			if(font == null)
-				font = mc.font;
 			mc.getItemRenderer().renderAndDecorateItem(stack, x, y);
-			mc.getItemRenderer().renderGuiItemDecorations(font, stack, x, y, null);
+			mc.getItemRenderer().renderGuiItemDecorations(mc.font, stack, x, y, null);
 		}
 	}
 	
 	private static LazyOptional<ILockedInventory> getCachedLockedInv(Minecraft mc)
 	{
-		if(!cachedLockedInv.isPresent())
+		if(!cachedLockedInv.isPresent() && mc.player != null)
 		{
 			cachedLockedInv = mc.player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY);
 			cachedLockedInv.addListener(self -> cachedLockedInv = LazyOptional.empty());
@@ -155,5 +155,11 @@ public class LockOverlay extends Widget
 	public static void onLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event)
 	{
 		cachedLockedInv = LazyOptional.empty();
+	}
+	
+	@Override
+	public void updateNarration(NarrationElementOutput narrationElementOutput)
+	{
+	
 	}
 }

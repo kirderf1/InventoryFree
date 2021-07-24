@@ -1,11 +1,11 @@
 package kirderf1.inventoryfree.network;
 
 import kirderf1.inventoryfree.capability.ILockedInventory;
-import kirderf1.inventoryfree.capability.ModCapabilities;
 import kirderf1.inventoryfree.client.ClientCapabilityHandler;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,28 +15,28 @@ import org.apache.logging.log4j.Logger;
 public class LockedInvSyncPacket implements Packet.ToClient
 {
 	private static final Logger LOGGER = LogManager.getLogger();
-	private final INBT nbt;
+	private final ListTag nbt;
 	
 	public static LockedInvSyncPacket makePacket(ILockedInventory lockedInv)
 	{
-		return new LockedInvSyncPacket(ModCapabilities.LOCKED_INV_CAPABILITY.writeNBT(lockedInv, null));
+		return new LockedInvSyncPacket(lockedInv.serializeNBT());
 	}
 	
-	private LockedInvSyncPacket(INBT nbt)
+	private LockedInvSyncPacket(ListTag nbt)
 	{
 		this.nbt = nbt;
 	}
 	
-	public static LockedInvSyncPacket decode(PacketBuffer buffer)
+	public static LockedInvSyncPacket decode(FriendlyByteBuf buffer)
 	{
-		CompoundNBT compound = buffer.readNbt();
-		return new LockedInvSyncPacket(compound != null ? compound.get("nbt") : null);
+		CompoundTag compound = buffer.readNbt();
+		return new LockedInvSyncPacket(compound != null ? compound.getList("nbt", Constants.NBT.TAG_COMPOUND) : null);
 	}
 	
 	@Override
-	public void encode(PacketBuffer buffer)
+	public void encode(FriendlyByteBuf buffer)
 	{
-		CompoundNBT compound = new CompoundNBT();
+		CompoundTag compound = new CompoundTag();
 		compound.put("nbt", nbt);
 		buffer.writeNbt(compound);
 	}
@@ -50,7 +50,7 @@ public class LockedInvSyncPacket implements Packet.ToClient
 		} else LOGGER.warn("InventoryFree got sync packet with invalid data");
 	}
 	
-	public INBT getNbt()
+	public ListTag getNbt()
 	{
 		return nbt;
 	}

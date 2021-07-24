@@ -1,10 +1,10 @@
 package kirderf1.inventoryfree;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,7 +28,7 @@ public class SlotBlocker
 	public static void onContainerOpened(PlayerContainerEvent.Open event)
 	{
 		LOGGER.debug("Container being opened. Inserting custom inventory slots...");
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		insertBlockedSlots(event.getContainer(), player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
@@ -36,7 +36,7 @@ public class SlotBlocker
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
 		LOGGER.debug("Player logged in. Inserting custom inventory slots into the inventory container...");
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
@@ -44,17 +44,17 @@ public class SlotBlocker
 	public static void onPlayerClone(PlayerEvent.Clone event)
 	{
 		LOGGER.debug("Player entity being cloned. Inserting custom inventory slots into the inventory container...");
-		ServerPlayerEntity player = (ServerPlayerEntity) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getPlayer();
 		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
-	public static void insertBlockedSlots(Container container, PlayerEntity player, Supplier<Integer> availableSlots)
+	public static void insertBlockedSlots(AbstractContainerMenu container, Player player, Supplier<Integer> availableSlots)
 	{
 		List<Slot> slots = container.slots;
 		for(int index = 0; index < slots.size(); index++)
 		{
 			Slot slot = slots.get(index);
-			if(!(slot instanceof BlockedSlot) && shouldReplaceSlot(slot, player.inventory))
+			if(!(slot instanceof BlockedSlot) && shouldReplaceSlot(slot, player.getInventory()))
 			{
 				final int finalIndex = slot.getSlotIndex();
 				Slot newSlot = new BlockedSlot(slot, () -> InventoryFree.appliesTo(player)
@@ -64,7 +64,7 @@ public class SlotBlocker
 		}
 	}
 	
-	private static boolean shouldReplaceSlot(Slot slot, PlayerInventory playerInv)
+	private static boolean shouldReplaceSlot(Slot slot, Inventory playerInv)
 	{
 		return slot.container == playerInv && slot.getSlotIndex() < 36;
 	}

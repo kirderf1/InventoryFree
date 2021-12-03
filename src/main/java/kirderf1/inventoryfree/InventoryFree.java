@@ -5,6 +5,7 @@ import kirderf1.inventoryfree.capability.ModCapabilities;
 import kirderf1.inventoryfree.network.PacketHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
@@ -35,7 +36,9 @@ public class InventoryFree
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::onConfigReload);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModCapabilities::register);
 		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
+		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModCapabilities::attachEntityCapability);
 	}
 	
 	static
@@ -70,7 +73,6 @@ public class InventoryFree
 	public static void setup(FMLCommonSetupEvent event)
 	{
 		PacketHandler.registerPackets();
-		ModCapabilities.register();
 	}
 	
 	public static void onConfigReload(ModConfigEvent.Reloading event)

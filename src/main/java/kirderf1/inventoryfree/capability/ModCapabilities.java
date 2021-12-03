@@ -6,14 +6,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,7 +16,6 @@ import javax.annotation.Nullable;
 /**
  * Registers and attaches capabilities provided by InventoryFree.
  */
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
 public class ModCapabilities
 {
 	private static final ResourceLocation LOCKED_INV_NAME = new ResourceLocation(InventoryFree.MOD_ID, "locked_inv");
@@ -29,15 +23,13 @@ public class ModCapabilities
 	/**
 	 * Capability to store items that are stuck in locked slots
 	 */
-	@CapabilityInject(ILockedInventory.class)
-	public static Capability<ILockedInventory> LOCKED_INV_CAPABILITY = null;
+	public static final Capability<ILockedInventory> LOCKED_INV_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
 	
-	public static void register()
+	public static void register(RegisterCapabilitiesEvent event)
 	{
-		CapabilityManager.INSTANCE.register(ILockedInventory.class);
+		event.register(ILockedInventory.class);
 	}
 	
-	@SubscribeEvent
 	public static void attachEntityCapability(AttachCapabilitiesEvent<Entity> event)
 	{
 		if(event.getObject() instanceof Player)

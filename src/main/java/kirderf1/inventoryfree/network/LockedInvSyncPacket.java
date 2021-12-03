@@ -4,8 +4,8 @@ import kirderf1.inventoryfree.capability.ILockedInventory;
 import kirderf1.inventoryfree.client.ClientCapabilityHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,7 +30,7 @@ public class LockedInvSyncPacket implements Packet.ToClient
 	public static LockedInvSyncPacket decode(FriendlyByteBuf buffer)
 	{
 		CompoundTag compound = buffer.readNbt();
-		return new LockedInvSyncPacket(compound != null ? compound.getList("nbt", Constants.NBT.TAG_COMPOUND) : null);
+		return new LockedInvSyncPacket(compound != null ? compound.getList("nbt", Tag.TAG_COMPOUND) : null);
 	}
 	
 	@Override

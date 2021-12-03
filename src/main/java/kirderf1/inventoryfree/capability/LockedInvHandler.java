@@ -6,6 +6,7 @@ import kirderf1.inventoryfree.network.LockedInvSyncPacket;
 import kirderf1.inventoryfree.network.PacketHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -15,13 +16,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Collection;
 
@@ -144,7 +144,7 @@ public class LockedInvHandler
 	private static int getPrevAvailableSlots(ServerPlayer player)
 	{
 		CompoundTag nbt = PlayerData.getPersistentTag(player);
-		return nbt.contains("slot_cache", Constants.NBT.TAG_ANY_NUMERIC)
+		return nbt.contains("slot_cache", Tag.TAG_ANY_NUMERIC)
 				? Mth.clamp(nbt.getInt("slot_cache"), 0, 36)
 				: 36;
 	}

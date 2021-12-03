@@ -7,8 +7,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.ScreenOpenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -40,9 +40,9 @@ public class ClientSlotBlocker
 	}
 	
 	@SubscribeEvent
-	public static void onGuiOpened(GuiOpenEvent event)
+	public static void onGuiOpened(ScreenOpenEvent event)
 	{
-		if(event.getGui() instanceof AbstractContainerScreen<?> screen)
+		if(event.getScreen() instanceof AbstractContainerScreen<?> screen)
 		{
 			LOGGER.debug("Container screen being opened. Inserting custom inventory slots...");
 			SlotBlocker.insertBlockedSlots(screen.getMenu(), Minecraft.getInstance().player, ClientData::getAvailableSlots);
@@ -50,11 +50,11 @@ public class ClientSlotBlocker
 	}
 	
 	@SubscribeEvent
-	public static void onGuiInitialized(GuiScreenEvent.InitGuiEvent event)
+	public static void onGuiInitialized(ScreenEvent.InitScreenEvent event)
 	{
-		if(event.getGui() instanceof AbstractContainerScreen<?> screen)
+		if(event.getScreen() instanceof AbstractContainerScreen<?> screen)
 		{
-			event.addWidget(new LockOverlay(screen));
+			event.addListener(new LockOverlay(screen));
 		}
 	}
 }

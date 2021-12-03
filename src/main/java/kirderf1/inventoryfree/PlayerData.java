@@ -4,14 +4,14 @@ import kirderf1.inventoryfree.capability.LockedInvHandler;
 import kirderf1.inventoryfree.network.PacketHandler;
 import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 
 @Mod.EventBusSubscriber
 public class PlayerData
@@ -82,7 +82,7 @@ public class PlayerData
 	}
 	private static CompoundTag getOrCreate(CompoundTag nbt, String str)
 	{
-		if(!nbt.contains(str, Constants.NBT.TAG_COMPOUND))
+		if(!nbt.contains(str, Tag.TAG_COMPOUND))
 			nbt.put(str, new CompoundTag());
 		return nbt.getCompound(str);
 	}

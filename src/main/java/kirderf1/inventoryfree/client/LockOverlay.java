@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.common.util.LazyOptional;
@@ -35,7 +34,6 @@ public class LockOverlay extends AbstractWidget
 	private static final int LOCK_BLIT = 200;
 	
 	private final AbstractContainerScreen<?> screen;
-	private static LazyOptional<ILockedInventory> cachedLockedInv = LazyOptional.empty();
 	
 	public LockOverlay(AbstractContainerScreen<?> screen)
 	{
@@ -51,7 +49,7 @@ public class LockOverlay extends AbstractWidget
 			return;
 		
 		RenderSystem.enableDepthTest();
-		getCachedLockedInv(mc).ifPresent(lockedInv -> {
+		getLockedInv(mc).ifPresent(lockedInv -> {
 			// Draw items in locked slots from the locked inventory
 			for(Slot slot : screen.getMenu().slots)
 			{
@@ -91,7 +89,7 @@ public class LockOverlay extends AbstractWidget
 			int scaledHeight = mc.getWindow().getGuiScaledHeight();
 			
 			RenderSystem.enableDepthTest();
-			getCachedLockedInv(mc).ifPresent(lockedInv -> {
+			getLockedInv(mc).ifPresent(lockedInv -> {
 				// Draw items in locked slots from the locked inventory
 				for(Slot slot : mc.player.inventoryMenu.slots)
 				{
@@ -131,30 +129,13 @@ public class LockOverlay extends AbstractWidget
 		}
 	}
 	
-	private static LazyOptional<ILockedInventory> getCachedLockedInv(Minecraft mc)
+	private static LazyOptional<ILockedInventory> getLockedInv(Minecraft mc)
 	{
-		if(!cachedLockedInv.isPresent() && mc.player != null)
+		if(mc.player != null)
 		{
-			cachedLockedInv = mc.player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY);
-			cachedLockedInv.addListener(self -> cachedLockedInv = LazyOptional.empty());
-		}
-		return cachedLockedInv;
-	}
-	
-	// Caps are not naturally invalidated in certain circumstances, so we have to clear it manually
-	// Normally this shouldn't be a problem, but because the cache is static, and not part of a world object, it doesn't get cleared with the world
-	// If additional cap invalidation problems show up, it should be fine to throw out the cache altogether
-	
-	@SubscribeEvent
-	public static void onClientRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
-	{
-		cachedLockedInv = LazyOptional.empty();
-	}
-	
-	@SubscribeEvent
-	public static void onLoggedOut(ClientPlayerNetworkEvent.LoggedOutEvent event)
-	{
-		cachedLockedInv = LazyOptional.empty();
+			return mc.player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY);
+		} else
+			return LazyOptional.empty();
 	}
 	
 	@Override

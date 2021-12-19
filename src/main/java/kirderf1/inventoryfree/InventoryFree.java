@@ -54,6 +54,7 @@ public class InventoryFree
 		public final ForgeConfigSpec.ConfigValue<String> unlockSlotItem;
 		public final ForgeConfigSpec.IntValue unlockedLostOnDeath;
 		public final ForgeConfigSpec.BooleanValue dropItemsInLockedSlots;
+		public final ForgeConfigSpec.EnumValue<SlotUnlocker.CostProgression> costProgression;
 		
 		private Config(ForgeConfigSpec.Builder builder)
 		{
@@ -66,6 +67,8 @@ public class InventoryFree
 					.defineInRange("unlockedLostOnDeath", 0, -1, 36);
 			dropItemsInLockedSlots = builder.comment("If true, items will be dropped when the slot they're in is locked. If false, the items will instead be moved to a locked inventory where they'll stay until the slot is unlocked again.")
 					.define("dropItemsInLockedSlots", false);
+			costProgression = builder.comment("Specifies how the cost of unlocking a slot changes after each unlock. CONSTANT: 1, 1, 1... LINEAR: 1, 2, 3, 4... EXPONENTIAL: 1, 2, 4, 8, 16, 32, 64, after which no more slots can be unlocked.")
+							.defineEnum("costProgression", SlotUnlocker.CostProgression.CONSTANT);
 			builder.pop();
 		}
 	}

@@ -45,11 +45,15 @@ public class SlotUnlocker
 		
 		if(shouldUnlockWith(stack, unlockedSlots))
 		{
-			event.setCanceled(true);
-			event.setCancellationResult(InteractionResult.SUCCESS);
-			stack.shrink(1);
-			if(event.getSide() == LogicalSide.SERVER)
-				PlayerData.unlockSlots((ServerPlayer) event.getPlayer(), 1);
+			int requiredCount = getRequiredItemCount(unlockedSlots);
+			if(requiredCount != -1 && stack.getCount() >= requiredCount)
+			{
+				event.setCanceled(true);
+				event.setCancellationResult(InteractionResult.SUCCESS);
+				stack.shrink(requiredCount);
+				if(event.getSide() == LogicalSide.SERVER)
+					PlayerData.unlockSlots((ServerPlayer) event.getPlayer(), 1);
+			}
 		}
 	}
 	
@@ -57,5 +61,24 @@ public class SlotUnlocker
 	{
 		return InventoryFree.getAvailableSlots(unlockedSlots) != InventoryFree.getAvailableSlots(unlockedSlots + 1)
 				&& new ResourceLocation(InventoryFree.CONFIG.unlockSlotItem.get()).equals(stack.getItem().getRegistryName());
+	}
+	
+	public static int getRequiredItemCount(int unlockedSlots)
+	{
+		unlockedSlots = Math.max(0, unlockedSlots);
+		return switch(InventoryFree.CONFIG.costProgression.get())
+				{
+					case CONSTANT -> 1;
+					case LINEAR -> 1 + unlockedSlots;
+					case EXPONENTIAL -> unlockedSlots > 6 ? -1
+							: (int) Math.pow(2, unlockedSlots);
+				};
+	}
+	
+	public enum CostProgression
+	{
+		CONSTANT,
+		LINEAR,
+		EXPONENTIAL,
 	}
 }

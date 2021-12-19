@@ -15,6 +15,13 @@ public class UnlockTooltipHandler
 	public static void onTooltipEvent(ItemTooltipEvent event)
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
-			event.getToolTip().add(new TranslatableComponent("inventory_free.unlock.tooltip").withStyle(ChatFormatting.AQUA));
+		{
+			int requiredCount = SlotUnlocker.getRequiredItemCount(ClientData.getUnlockedSlots());
+			if(requiredCount != -1)
+			{
+				event.getToolTip().add(new TranslatableComponent("inventory_free.unlock.tooltip").withStyle(ChatFormatting.AQUA));
+				event.getToolTip().add(new TranslatableComponent("inventory_free.unlock.tooltip2", requiredCount).withStyle(ChatFormatting.AQUA));
+			}
+		}
 	}
 }

@@ -1,3 +1,4 @@
 {
-    "inventory_free.unlock.tooltip": "Right-click in hand to consume and unlock an inventory slot!"
+    "inventory_free.unlock.tooltip": "Right-click in hand to consume and unlock an inventory slot!",
+    "inventory_free.unlock.tooltip2": "%d is needed to unlock the next slot."
 }

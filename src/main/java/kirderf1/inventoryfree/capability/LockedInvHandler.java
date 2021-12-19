@@ -74,6 +74,7 @@ public class LockedInvHandler
 	
 	public static void copyOverCap(Player oldPlayer, Player newPlayer)
 	{
+		oldPlayer.reviveCaps();
 		oldPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(oldInv ->
 				newPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(newInv -> {
 					
@@ -81,6 +82,7 @@ public class LockedInvHandler
 					newInv.deserializeNBT(nbt);
 				})
 		);
+		oldPlayer.invalidateCaps();
 	}
 	
 	@SubscribeEvent

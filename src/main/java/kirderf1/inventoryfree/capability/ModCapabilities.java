@@ -44,7 +44,6 @@ public class ModCapabilities
 		{
 			LockedInvProvider provider = new LockedInvProvider();
 			event.addCapability(LOCKED_INV_NAME, provider);
-			event.addListener(provider.optional::invalidate);
 		}
 	}
 	

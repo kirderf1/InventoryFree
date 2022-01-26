@@ -18,7 +18,7 @@ import java.util.Objects;
 
 /**
  * Same as {@link SlotBlocker}, but for client-side events.
- * Is also responsible for applying the {@link LockOverlay}.
+ * Is also responsible for add the {@link LockOverlay} to new container screens.
  */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public class ClientSlotBlocker

@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 /**
  * A widget which will draw an icon on top of all slots which are blocked.
  * It is also responsible for drawing the icon on the overlay hotbar when appropriate.
+ * Any items in the {@link ILockedInventory} capability will be drawn underneath the icon.
  */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public class LockOverlay extends AbstractWidget
@@ -42,7 +43,7 @@ public class LockOverlay extends AbstractWidget
 	}
 	
 	@Override
-	public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
 	{
 		Minecraft mc = Minecraft.getInstance();
 		if(!InventoryFree.appliesTo(mc.player))
@@ -70,7 +71,7 @@ public class LockOverlay extends AbstractWidget
 		{
 			if(slot instanceof BlockedSlot && !slot.isActive())
 			{
-				blit(matrixStack, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, getBlitOffset() + LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+				blit(poseStack, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, getBlitOffset() + LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}

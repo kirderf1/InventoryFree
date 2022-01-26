@@ -3,6 +3,9 @@ package kirderf1.inventoryfree.network;
 import kirderf1.inventoryfree.client.ClientData;
 import net.minecraft.network.FriendlyByteBuf;
 
+/**
+ * Packet for sending the number of unlocked slots to {@link ClientData}.
+ */
 public class UnlockedSlotsPacket implements Packet.ToClient
 {
 	private final int unlockedSlots;

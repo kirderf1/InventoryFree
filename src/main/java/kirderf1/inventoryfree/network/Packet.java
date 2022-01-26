@@ -5,12 +5,18 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+/**
+ * Basic packet interface. Contains more specific packet interfaces.
+ */
 public interface Packet
 {
 	void encode(FriendlyByteBuf buffer);
 	
 	void consume(Supplier<NetworkEvent.Context> context);
 	
+	/**
+	 * Interface for a packet going from server-side to client-side.
+	 */
 	interface ToClient extends Packet
 	{
 		@Override

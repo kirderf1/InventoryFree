@@ -11,6 +11,9 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
 
+/**
+ * Defines the /inventory_slots command and all of its subcommands.
+ */
 public class InventorySlotsCommand
 {
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher)

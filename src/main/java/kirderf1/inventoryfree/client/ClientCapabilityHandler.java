@@ -11,6 +11,10 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+/**
+ * Handles capabilities on client-side by copying over capability data on respawn
+ * and handling data sync packets.
+ */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public class ClientCapabilityHandler
 {

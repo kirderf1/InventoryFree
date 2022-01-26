@@ -21,15 +21,12 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.tuple.Pair;
 
 /**
- * The central mod class. Currently holds the config and the player/slot conditions.
+ * The central mod class. Also holds the config and the player/slot conditions.
  */
 @Mod(InventoryFree.MOD_ID)
 public class InventoryFree
 {
 	public static final String MOD_ID = "inventory_free";
-	
-	public static final Config CONFIG;
-	private static final ForgeConfigSpec configSpec;
 	
 	public InventoryFree()
 	{
@@ -41,6 +38,29 @@ public class InventoryFree
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModCapabilities::attachEntityCapability);
 	}
 	
+	private static void setup(FMLCommonSetupEvent event)
+	{
+		PacketHandler.registerPackets();
+	}
+	
+	private static void onConfigReload(ModConfigEvent.Reloading event)
+	{
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if(server != null)
+			server.submit(() -> LockedInvHandler.onConfigReload(server));
+	}
+	
+	private static void onRegisterCommands(RegisterCommandsEvent event)
+	{
+		InventorySlotsCommand.register(event.getDispatcher());
+	}
+	
+	/**
+	 * Instance of the mod config.
+	 */
+	public static final Config CONFIG;
+	private static final ForgeConfigSpec configSpec;
+	
 	static
 	{
 		Pair<Config, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Config::new);
@@ -48,6 +68,10 @@ public class InventoryFree
 		configSpec = specPair.getRight();
 	}
 	
+	/**
+	 * Class that defines the server type mod config.
+	 * This is where all the config options are defined.
+	 */
 	public static class Config
 	{
 		public final ForgeConfigSpec.IntValue availableSlots;
@@ -73,40 +97,37 @@ public class InventoryFree
 		}
 	}
 	
-	public static void setup(FMLCommonSetupEvent event)
-	{
-		PacketHandler.registerPackets();
-	}
-	
-	public static void onConfigReload(ModConfigEvent.Reloading event)
-	{
-		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-		if(server != null)
-			server.submit(() -> LockedInvHandler.onConfigReload(server));
-	}
-	
-	public static void onRegisterCommands(RegisterCommandsEvent event)
-	{
-		InventorySlotsCommand.register(event.getDispatcher());
-	}
-	
+	/**
+	 * Returns the number of available slots based on the number of unlocked slots.
+	 * Does not take player game type into account.
+	 */
 	public static int getAvailableSlots(int unlockedSlots)
 	{
 		return Mth.clamp(InventoryFree.CONFIG.availableSlots.get() + unlockedSlots, 1, 36);
 	}
+	
+	/**
+	 * Given that the index is for a player inventory slot,
+	 * determines if the slot should be blocked based on the number of available slots.
+	 */
 	public static boolean isSlotToBeBlocked(int index, int availableSlots)
 	{
 		return index >= availableSlots && index < 36;
 	}
 	
+	/**
+	 * Determines if the player should have their slots blocked.
+	 */
 	public static boolean appliesTo(Player player)
 	{
 		return player != null && !player.isCreative() && !player.isSpectator();
 	}
 	
+	/**
+	 * Determines if a player with this game type should have their slots blocked.
+	 */
 	public static boolean appliesTo(GameType gameMode)
 	{
 		return gameMode.isSurvival();
 	}
-	
 }

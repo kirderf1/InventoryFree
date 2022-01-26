@@ -8,6 +8,9 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.function.Function;
 
+/**
+ * Sets up the network channel and registers packets to it.
+ */
 public class PacketHandler
 {
 	private static final String PROTOCOL_VERSION = "1";

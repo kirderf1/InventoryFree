@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * The common class for inserting our custom slots into containers.
- * Listens to some server-side events to handle new containers.
+ * The common class for inserting our custom slots into container menus.
+ * Listens to some server-side events to handle new container menus.
  */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
 public class SlotBlocker
@@ -48,9 +48,13 @@ public class SlotBlocker
 		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
-	public static void insertBlockedSlots(AbstractContainerMenu container, Player player, Supplier<Integer> availableSlots)
+	/**
+	 * Goes through the menu slots and replaces certain slots with a {@link BlockedSlot}.
+	 * This function can be used on both logical sides by providing the correct "available slots"-getter.
+	 */
+	public static void insertBlockedSlots(AbstractContainerMenu menu, Player player, Supplier<Integer> availableSlots)
 	{
-		List<Slot> slots = container.slots;
+		List<Slot> slots = menu.slots;
 		for(int index = 0; index < slots.size(); index++)
 		{
 			Slot slot = slots.get(index);
@@ -64,6 +68,9 @@ public class SlotBlocker
 		}
 	}
 	
+	/**
+	 * Determines if the given slot should be replaced with a {@link BlockedSlot}.
+	 */
 	private static boolean shouldReplaceSlot(Slot slot, Inventory playerInv)
 	{
 		return slot.container == playerInv && slot.getSlotIndex() < 36;

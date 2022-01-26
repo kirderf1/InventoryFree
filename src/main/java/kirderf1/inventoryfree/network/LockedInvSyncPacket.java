@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Packet for syncing data of a {@link ILockedInventory} capability to client-side
+ * Packet for syncing data of a {@link ILockedInventory} capability to client-side.
  */
 public class LockedInvSyncPacket implements Packet.ToClient
 {

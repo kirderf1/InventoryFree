@@ -12,7 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Is responsible for enforcing that blocked inventory slots are empty,
+ * Is responsible on the logical server-side for
+ * enforcing that blocked inventory slots are empty,
  * but also for stopping item pickups when appropriate.
  */
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
@@ -54,6 +55,11 @@ public class InventoryEnforcer
 		}
 	}
 	
+	/**
+	 * Checks if the slot is blocked and has an item,
+	 * and if so tries to move it to an empty unblocked slot.
+	 * If it fails to do so, the player will drop the item instead.
+	 */
 	private static boolean enforceSlot(int index, Inventory inventory, int availableSlots)
 	{
 		ItemStack stack = inventory.getItem(index);
@@ -70,6 +76,9 @@ public class InventoryEnforcer
 		return false;
 	}
 	
+	/**
+	 * Checks if an item can be picked up given the number of available slots.
+	 */
 	private static boolean canStoreItem(Inventory inventory, ItemStack stack, int availableSlots)
 	{
 		if(findAvailableSlot(inventory, availableSlots) != -1)
@@ -80,6 +89,10 @@ public class InventoryEnforcer
 		return index >= 0 && !InventoryFree.isSlotToBeBlocked(index, availableSlots);
 	}
 	
+	/**
+	 * Searches the player inventory for the first empty slot that is not blocked,
+	 * and returns its index, or -1 if no such slot was found.
+	 */
 	private static int findAvailableSlot(Inventory inventory, int availableSlots)
 	{
 		for(int index = 0; index < inventory.items.size(); index++)

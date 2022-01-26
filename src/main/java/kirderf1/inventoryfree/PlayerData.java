@@ -13,6 +13,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
+/**
+ * Handles the player-specific value for unlocked slots,
+ * by providing accessors and syncing it to client by
+ * sending a {@link UnlockedSlotsPacket} at appropriate times.
+ * It also handles loss of unlocks on death.
+ */
 @Mod.EventBusSubscriber
 public class PlayerData
 {
@@ -38,6 +44,9 @@ public class PlayerData
 		}
 	}
 	
+	/**
+	 * Returns the number of available slots based on the player and their game type.
+	 */
 	public static int getAvailableSlots(ServerPlayer player)
 	{
 		if(InventoryFree.appliesTo(player))
@@ -45,6 +54,9 @@ public class PlayerData
 		else return 36;
 	}
 	
+	/**
+	 * Returns the number of available slots based on the player and the provided game type.
+	 */
 	public static int getAvailableSlots(ServerPlayer player, GameType gameMode)
 	{
 		if(InventoryFree.appliesTo(gameMode))
@@ -52,11 +64,18 @@ public class PlayerData
 		else return 36;
 	}
 	
+	/**
+	 * Gets the number of unlocked slots for a player.
+	 */
 	public static int getUnlockedSlots(ServerPlayer player)
 	{
 		return getPersistentTag(player).getInt("unlocked_slots");
 	}
 	
+	/**
+	 * Changes the number of unlocked slots for a player, sends it to client-side,
+	 * and notifies {@link LockedInvHandler} that there may have been a change.
+	 */
 	public static void unlockSlots(ServerPlayer player, int amount)
 	{
 		CompoundTag nbt = getOrCreatePersistentTag(player);
@@ -65,6 +84,10 @@ public class PlayerData
 		LockedInvHandler.onLockChange(player);
 	}
 	
+	/**
+	 * Changes the number of unlocked slots for a player, sends it to client-side,
+	 * and notifies {@link LockedInvHandler} that there may have been a change.
+	 */
 	public static void setUnlockedSlots(ServerPlayer player, int unlockedSlots)
 	{
 		getOrCreatePersistentTag(player).putInt("unlocked_slots", unlockedSlots);

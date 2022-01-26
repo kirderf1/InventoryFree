@@ -8,6 +8,9 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+/**
+ * Adds tooltip text to items which can unlock slots.
+ */
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class UnlockTooltipHandler
 {

@@ -24,7 +24,7 @@ repositories {
 }
 
 group = 'kirderf1'
-version = '1.18.2-3.1.0'
+version = '1.18.2-3.1.1'
 archivesBaseName = 'InventoryFree'
 
 // Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.

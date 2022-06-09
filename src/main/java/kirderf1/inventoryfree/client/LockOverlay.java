@@ -11,7 +11,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +38,7 @@ public class LockOverlay extends AbstractWidget
 	
 	public LockOverlay(AbstractContainerScreen<?> screen)
 	{
-		super(0, 0, 0, 0, TextComponent.EMPTY);
+		super(0, 0, 0, 0, CommonComponents.EMPTY);
 		this.screen = screen;
 	}
 	
@@ -115,7 +115,7 @@ public class LockOverlay extends AbstractWidget
 				{
 					int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 					int y = (scaledHeight - 16) - 3;
-					blit(event.getMatrixStack(), x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+					blit(event.getPoseStack(), x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 				}
 			}
 		}

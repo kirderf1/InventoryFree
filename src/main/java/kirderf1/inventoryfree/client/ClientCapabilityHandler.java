@@ -20,7 +20,7 @@ public class ClientCapabilityHandler
 {
 	
 	@SubscribeEvent
-	public static void onClientRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
+	public static void onClientRespawn(ClientPlayerNetworkEvent.Clone event)
 	{
 		LockedInvHandler.copyOverCap(event.getOldPlayer(), event.getNewPlayer());
 	}

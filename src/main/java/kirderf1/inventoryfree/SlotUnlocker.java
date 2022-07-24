@@ -48,7 +48,7 @@ public class SlotUnlocker
 	{
 		ItemStack stack = event.getItemStack();
 		int unlockedSlots = event.getSide() == LogicalSide.CLIENT ? ClientData.getUnlockedSlots()
-				: PlayerData.getUnlockedSlots((ServerPlayer) event.getPlayer());
+				: PlayerData.getUnlockedSlots((ServerPlayer) event.getEntity());
 		
 		if(shouldUnlockWith(stack, unlockedSlots))
 		{
@@ -59,7 +59,7 @@ public class SlotUnlocker
 				event.setCancellationResult(InteractionResult.SUCCESS);
 				stack.shrink(requiredCount);
 				if(event.getSide() == LogicalSide.SERVER)
-					PlayerData.unlockSlots((ServerPlayer) event.getPlayer(), 1);
+					PlayerData.unlockSlots((ServerPlayer) event.getEntity(), 1);
 			}
 		}
 	}

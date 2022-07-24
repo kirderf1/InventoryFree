@@ -8,7 +8,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.event.ScreenOpenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -26,21 +25,21 @@ public class ClientSlotBlocker
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
-	public static void onLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+	public static void onLogin(ClientPlayerNetworkEvent.LoggingIn event)
 	{
 		LocalPlayer player = Objects.requireNonNull(event.getPlayer());
 		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
-	public static void onRespawn(ClientPlayerNetworkEvent.RespawnEvent event)
+	public static void onRespawn(ClientPlayerNetworkEvent.Clone event)
 	{
 		LocalPlayer player = Objects.requireNonNull(event.getPlayer());
 		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
-	public static void onGuiOpened(ScreenOpenEvent event)
+	public static void onGuiOpened(ScreenEvent.Opening event)
 	{
 		if(event.getScreen() instanceof AbstractContainerScreen<?> screen)
 		{
@@ -50,7 +49,7 @@ public class ClientSlotBlocker
 	}
 	
 	@SubscribeEvent
-	public static void onGuiInitialized(ScreenEvent.InitScreenEvent event)
+	public static void onGuiInitialized(ScreenEvent.Init.Post event)
 	{
 		if(event.getScreen() instanceof AbstractContainerScreen<?> screen)
 		{

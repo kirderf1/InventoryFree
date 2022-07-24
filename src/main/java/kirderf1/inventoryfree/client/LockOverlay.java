@@ -16,8 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -77,9 +77,9 @@ public class LockOverlay extends AbstractWidget
 	}
 	
 	@SubscribeEvent
-	public static void onHotbarOverlay(RenderGameOverlayEvent.PostLayer event)
+	public static void onHotbarOverlay(RenderGuiOverlayEvent.Post event)
 	{
-		if(event.getOverlay() == ForgeIngameGui.HOTBAR_ELEMENT)
+		if(event.getOverlay() == VanillaGuiOverlay.HOTBAR.type())
 		{
 			Minecraft mc = Minecraft.getInstance();
 			if(!InventoryFree.appliesTo(mc.player) || ClientData.getAvailableSlots() >= 9)

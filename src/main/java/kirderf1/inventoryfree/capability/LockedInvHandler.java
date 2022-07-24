@@ -34,7 +34,7 @@ public class LockedInvHandler
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		
 		onLockChange(player);
 		
@@ -48,7 +48,7 @@ public class LockedInvHandler
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void onDrops(LivingDropsEvent event)
 	{
-		LivingEntity entity = event.getEntityLiving();
+		LivingEntity entity = event.getEntity();
 		if(entity instanceof ServerPlayer player
 				&& !entity.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
 		{
@@ -69,7 +69,7 @@ public class LockedInvHandler
 	@SubscribeEvent
 	public static void onPlayerClone(PlayerEvent.Clone event)
 	{
-		copyOverCap(event.getOriginal(), event.getPlayer());
+		copyOverCap(event.getOriginal(), event.getEntity());
 	}
 	
 	public static void copyOverCap(Player oldPlayer, Player newPlayer)
@@ -88,13 +88,13 @@ public class LockedInvHandler
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
 	{
-		sendLockedInv((ServerPlayer) event.getPlayer());
+		sendLockedInv((ServerPlayer) event.getEntity());
 	}
 	
 	@SubscribeEvent
 	public static void onGameModeChange(PlayerEvent.PlayerChangeGameModeEvent event)
 	{
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		onLockChange(player, PlayerData.getAvailableSlots(player, event.getNewGameMode()));
 	}
 	

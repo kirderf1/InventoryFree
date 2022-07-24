@@ -25,7 +25,7 @@ public class PlayerData
 	@SubscribeEvent
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		int unlockedSlots = getUnlockedSlots(player);
 		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(unlockedSlots));
 	}
@@ -33,13 +33,13 @@ public class PlayerData
 	@SubscribeEvent
 	public static void onClone(PlayerEvent.Clone event)
 	{
-		int unlockedSlots = getUnlockedSlots((ServerPlayer) event.getPlayer());
+		int unlockedSlots = getUnlockedSlots((ServerPlayer) event.getEntity());
 		if(event.isWasDeath() && InventoryFree.CONFIG.unlockedLostOnDeath.get() != 0
 				&& unlockedSlots != 0)
 		{
 			if(InventoryFree.CONFIG.unlockedLostOnDeath.get() < 0)
-				setUnlockedSlots((ServerPlayer) event.getPlayer(), 0);
-			else setUnlockedSlots((ServerPlayer) event.getPlayer(), Math.min(unlockedSlots,
+				setUnlockedSlots((ServerPlayer) event.getEntity(), 0);
+			else setUnlockedSlots((ServerPlayer) event.getEntity(), Math.min(unlockedSlots,
 					Math.max(0, unlockedSlots - InventoryFree.CONFIG.unlockedLostOnDeath.get())));
 		}
 	}

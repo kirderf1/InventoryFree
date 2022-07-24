@@ -28,7 +28,7 @@ public class SlotBlocker
 	public static void onContainerOpened(PlayerContainerEvent.Open event)
 	{
 		LOGGER.debug("Container being opened. Inserting custom inventory slots...");
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		insertBlockedSlots(event.getContainer(), player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
@@ -36,7 +36,7 @@ public class SlotBlocker
 	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
 		LOGGER.debug("Player logged in. Inserting custom inventory slots into the inventory container...");
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	
@@ -44,7 +44,7 @@ public class SlotBlocker
 	public static void onPlayerClone(PlayerEvent.Clone event)
 	{
 		LOGGER.debug("Player entity being cloned. Inserting custom inventory slots into the inventory container...");
-		ServerPlayer player = (ServerPlayer) event.getPlayer();
+		ServerPlayer player = (ServerPlayer) event.getEntity();
 		insertBlockedSlots(player.inventoryMenu, player, () -> PlayerData.getAvailableSlots(player));
 	}
 	

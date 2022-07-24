@@ -47,10 +47,10 @@ public class InventoryEnforcer
 	@SubscribeEvent
 	public static void onItemPickup(EntityItemPickupEvent event)
 	{
-		if(InventoryFree.appliesTo(event.getPlayer()))
+		if(InventoryFree.appliesTo(event.getEntity()))
 		{
-			if(!canStoreItem(event.getPlayer().getInventory(), event.getItem().getItem(),
-					PlayerData.getAvailableSlots((ServerPlayer) event.getPlayer())))
+			if(!canStoreItem(event.getEntity().getInventory(), event.getItem().getItem(),
+					PlayerData.getAvailableSlots((ServerPlayer) event.getEntity())))
 				event.setCanceled(true);
 		}
 	}

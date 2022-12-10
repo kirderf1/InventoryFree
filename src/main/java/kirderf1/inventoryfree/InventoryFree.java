@@ -79,6 +79,7 @@ public class InventoryFree
 		public final ForgeConfigSpec.IntValue unlockedLostOnDeath;
 		public final ForgeConfigSpec.BooleanValue dropItemsInLockedSlots;
 		public final ForgeConfigSpec.EnumValue<SlotUnlocker.CostProgression> costProgression;
+		public final ForgeConfigSpec.IntValue costMultiplier;
 		
 		private Config(ForgeConfigSpec.Builder builder)
 		{
@@ -92,7 +93,9 @@ public class InventoryFree
 			dropItemsInLockedSlots = builder.comment("If true, items will be dropped when the slot they're in is locked. If false, the items will instead be moved to a locked inventory where they'll stay until the slot is unlocked again.")
 					.define("dropItemsInLockedSlots", false);
 			costProgression = builder.comment("Specifies how the cost of unlocking a slot changes after each unlock. CONSTANT: 1, 1, 1... LINEAR: 1, 2, 3, 4... EXPONENTIAL: 1, 2, 4, 8, 16, 32, 64, after which no more slots can be unlocked.")
-							.defineEnum("costProgression", SlotUnlocker.CostProgression.CONSTANT);
+					.defineEnum("costProgression", SlotUnlocker.CostProgression.CONSTANT);
+			costMultiplier = builder.comment("A multiplier to the cost given by the cost progression. A multiplier of 3 will affect cost progressions in the following way. CONSTANT: 3, 3, 3... LINEAR: 3, 6, 9, 12... EXPONENTIAL: 3, 6, 12, 24, 48")
+					.defineInRange("costMultiplier", 1, 1, 64);
 			builder.pop();
 		}
 	}

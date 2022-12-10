@@ -1,7 +1,6 @@
 package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.client.ClientData;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +9,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.function.IntUnaryOperator;
 
 /**
  * Responsible for unlocking slots when using a configured item.
@@ -52,7 +53,7 @@ public class SlotUnlocker
 		
 		if(shouldUnlockWith(stack, unlockedSlots))
 		{
-			int requiredCount = getRequiredItemCount(unlockedSlots);
+			int requiredCount = getRequiredItemCount(unlockedSlots, stack.getMaxStackSize());
 			if(requiredCount != -1 && stack.getCount() >= requiredCount)
 			{
 				event.setCanceled(true);
@@ -70,28 +71,39 @@ public class SlotUnlocker
 	public static boolean shouldUnlockWith(ItemStack stack, int unlockedSlots)
 	{
 		return InventoryFree.getAvailableSlots(unlockedSlots) != InventoryFree.getAvailableSlots(unlockedSlots + 1)
-				&& new ResourceLocation(InventoryFree.CONFIG.unlockSlotItem.get()).equals(ForgeRegistries.ITEMS.getKey(stack.getItem()));
+				&& InventoryFree.CONFIG.unlockSlotItem.get().equals(String.valueOf(ForgeRegistries.ITEMS.getKey(stack.getItem())));
 	}
 	
 	/**
 	 * Returns the number of items needed to unlock the next slot.
+	 * When a cost would have been above the max stack size of the item,
+	 * will return -1 instead to indicate that no more slots can be unlocked.
+	 * (This is done because only one stack will be used when unlocking new slots)
 	 */
-	public static int getRequiredItemCount(int unlockedSlots)
+	public static int getRequiredItemCount(int unlockedSlots, int max)
 	{
 		unlockedSlots = Math.max(0, unlockedSlots);
-		return switch(InventoryFree.CONFIG.costProgression.get())
-				{
-					case CONSTANT -> 1;
-					case LINEAR -> 1 + unlockedSlots;
-					case EXPONENTIAL -> unlockedSlots > 6 ? -1
-							: (int) Math.pow(2, unlockedSlots);
-				};
+		int baseCost = InventoryFree.CONFIG.costProgression.get().costGetter.applyAsInt(unlockedSlots);
+		if(baseCost == -1)
+			return -1;
+		
+		int cost = baseCost * InventoryFree.CONFIG.costMultiplier.get();
+		return cost <= max ? cost : -1;
 	}
 	
+	@SuppressWarnings("unused")
 	public enum CostProgression
 	{
-		CONSTANT,
-		LINEAR,
-		EXPONENTIAL,
+		CONSTANT(unlockedSlots -> 1),
+		LINEAR(unlockedSlots -> 1 + unlockedSlots),
+		EXPONENTIAL(unlockedSlots -> unlockedSlots > 6 ? -1 : (int) Math.pow(2, unlockedSlots)),
+		;
+		
+		private final IntUnaryOperator costGetter;
+		
+		CostProgression(IntUnaryOperator costGetter)
+		{
+			this.costGetter = costGetter;
+		}
 	}
 }

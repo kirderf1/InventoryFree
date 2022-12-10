@@ -19,7 +19,7 @@ public class UnlockTooltipHandler
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
 		{
-			int requiredCount = SlotUnlocker.getRequiredItemCount(ClientData.getUnlockedSlots());
+			int requiredCount = SlotUnlocker.getRequiredItemCount(ClientData.getUnlockedSlots(), event.getItemStack().getMaxStackSize());
 			if(requiredCount != -1)
 			{
 				event.getToolTip().add(Component.translatable("inventory_free.unlock.tooltip").withStyle(ChatFormatting.AQUA));

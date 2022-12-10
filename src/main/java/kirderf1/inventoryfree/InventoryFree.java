@@ -33,6 +33,7 @@ public class InventoryFree
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::setup);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::onConfigReload);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(SlotUnlocker::verifyUnlockItem);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModCapabilities::register);
 		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
 		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModCapabilities::attachEntityCapability);

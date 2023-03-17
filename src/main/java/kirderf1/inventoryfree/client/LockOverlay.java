@@ -22,11 +22,14 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * A widget which will draw an icon on top of all slots which are blocked.
  * It is also responsible for drawing the icon on the overlay hotbar when appropriate.
  * Any items in the {@link ILockedInventory} capability will be drawn underneath the icon.
  */
+@ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public class LockOverlay extends AbstractWidget
 {
@@ -43,7 +46,7 @@ public class LockOverlay extends AbstractWidget
 	}
 	
 	@Override
-	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+	public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
 	{
 		Minecraft mc = Minecraft.getInstance();
 		if(!InventoryFree.appliesTo(mc.player))
@@ -56,7 +59,7 @@ public class LockOverlay extends AbstractWidget
 			{
 				if(slot instanceof BlockedSlot && !slot.isActive())
 				{
-					drawItem(lockedInv.getStack(slot.getSlotIndex()), mc,
+					drawItem(poseStack, lockedInv.getStack(slot.getSlotIndex()), mc,
 							screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y);
 				}
 			}
@@ -71,7 +74,7 @@ public class LockOverlay extends AbstractWidget
 		{
 			if(slot instanceof BlockedSlot && !slot.isActive())
 			{
-				blit(poseStack, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, getBlitOffset() + LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+				blit(poseStack, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}
@@ -82,6 +85,7 @@ public class LockOverlay extends AbstractWidget
 		if(event.getOverlay() == VanillaGuiOverlay.HOTBAR.type())
 		{
 			Minecraft mc = Minecraft.getInstance();
+			PoseStack poseStack = event.getPoseStack();
 			if(!InventoryFree.appliesTo(mc.player) || ClientData.getAvailableSlots() >= 9)
 				return;
 			
@@ -98,7 +102,7 @@ public class LockOverlay extends AbstractWidget
 					{
 						int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 						int y = (scaledHeight - 16) - 3;
-						drawItem(lockedInv.getStack(slot.getSlotIndex()), mc, x, y);
+						drawItem(poseStack, lockedInv.getStack(slot.getSlotIndex()), mc, x, y);
 					}
 				}
 			});
@@ -115,18 +119,18 @@ public class LockOverlay extends AbstractWidget
 				{
 					int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 					int y = (scaledHeight - 16) - 3;
-					blit(event.getPoseStack(), x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+					blit(poseStack, x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 				}
 			}
 		}
 	}
 	
-	private static void drawItem(ItemStack stack, Minecraft mc, int x, int y)
+	private static void drawItem(PoseStack poseStack, ItemStack stack, Minecraft mc, int x, int y)
 	{
 		if(!stack.isEmpty())
 		{
-			mc.getItemRenderer().renderAndDecorateItem(stack, x, y);
-			mc.getItemRenderer().renderGuiItemDecorations(mc.font, stack, x, y, null);
+			mc.getItemRenderer().renderAndDecorateItem(poseStack, stack, x, y);
+			mc.getItemRenderer().renderGuiItemDecorations(poseStack, mc.font, stack, x, y, null);
 		}
 	}
 	

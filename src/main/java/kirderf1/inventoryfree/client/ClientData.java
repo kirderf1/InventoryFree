@@ -23,6 +23,6 @@ public class ClientData
 	
 	public static void onPacket(UnlockedSlotsPacket packet)
 	{
-		unlockedSlots = packet.getUnlockedSlots();
+		unlockedSlots = packet.unlockedSlots();
 	}
 }

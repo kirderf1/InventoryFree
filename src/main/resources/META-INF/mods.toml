@@ -6,7 +6,7 @@
 modLoader="javafml" #mandatory
 
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[44,)" #mandatory
+loaderVersion="[45,)" #mandatory
 
 # The license for your mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 license="MIT"
@@ -52,7 +52,7 @@ A mod that frees you from a portion of your inventory, AKA disables slots in you
     mandatory=true #mandatory
 
     # The version range of the dependency
-    versionRange="[44,)" #mandatory
+    versionRange="[45,)" #mandatory
 
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
@@ -63,6 +63,6 @@ A mod that frees you from a portion of your inventory, AKA disables slots in you
 [[dependencies.inventory_free]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.3,1.20)"
+    versionRange="[1.19.4,1.20)"
     ordering="NONE"
     side="BOTH"

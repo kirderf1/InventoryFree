@@ -75,21 +75,21 @@ public class InventorySlotsCommand
 	private static int setUnlockedFor(CommandSourceStack source, Collection<ServerPlayer> targets, int unlockedSlots)
 	{
 		targets.forEach(player -> PlayerData.setUnlockedSlots(player, unlockedSlots));
-		source.sendSuccess(Component.literal("Set unlocked slots for "+targets.size()+" players"), true);
+		source.sendSuccess(() -> Component.literal("Set unlocked slots for "+targets.size()+" players"), true);
 		return targets.size();
 	}
 	
 	private static int addUnlockedFor(CommandSourceStack source, Collection<ServerPlayer> targets, int addedSlots)
 	{
 		targets.forEach(player -> PlayerData.unlockSlots(player, addedSlots));
-		source.sendSuccess(Component.literal("Changed unlocked slots for "+targets.size()+" players"), true);
+		source.sendSuccess(() -> Component.literal("Changed unlocked slots for "+targets.size()+" players"), true);
 		return targets.size();
 	}
 	
 	private static int getFor(CommandSourceStack source, ServerPlayer target)
 	{
-		source.sendSuccess(Component.literal("Unlocked slots: "+PlayerData.getUnlockedSlots(target)), false);
-		source.sendSuccess(Component.literal("Available slots: "+PlayerData.getAvailableSlots(target)), false);
+		source.sendSuccess(() -> Component.literal("Unlocked slots: "+PlayerData.getUnlockedSlots(target)), false);
+		source.sendSuccess(() -> Component.literal("Available slots: "+PlayerData.getAvailableSlots(target)), false);
 		return 1;
 	}
 }

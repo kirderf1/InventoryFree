@@ -50,7 +50,7 @@ public class LockedInvHandler
 	{
 		LivingEntity entity = event.getEntity();
 		if(entity instanceof ServerPlayer player
-				&& !entity.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+				&& !entity.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
 		{
 			player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
 				// Add drops from capability

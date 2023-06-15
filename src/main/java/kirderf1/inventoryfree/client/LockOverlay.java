@@ -1,16 +1,15 @@
 package kirderf1.inventoryfree.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import kirderf1.inventoryfree.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.capability.ILockedInventory;
 import kirderf1.inventoryfree.capability.ModCapabilities;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -35,7 +34,7 @@ public class LockOverlay extends AbstractWidget
 {
 	private static final ResourceLocation LOCK = new ResourceLocation(InventoryFree.MOD_ID, "textures/item/lock.png");
 	
-	private static final int LOCK_BLIT = 200;
+	private static final int LOCK_BLIT = 500;
 	
 	private final AbstractContainerScreen<?> screen;
 	
@@ -46,7 +45,7 @@ public class LockOverlay extends AbstractWidget
 	}
 	
 	@Override
-	public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+	protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks)
 	{
 		Minecraft mc = Minecraft.getInstance();
 		if(!InventoryFree.appliesTo(mc.player))
@@ -59,14 +58,12 @@ public class LockOverlay extends AbstractWidget
 			{
 				if(slot instanceof BlockedSlot && !slot.isActive())
 				{
-					drawItem(poseStack, lockedInv.getStack(slot.getSlotIndex()), mc,
+					drawItem(graphics, lockedInv.getStack(slot.getSlotIndex()), mc,
 							screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y);
 				}
 			}
 		});
 		
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, LOCK);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
 		
 		// Draw lock textures on locked slots
@@ -74,7 +71,7 @@ public class LockOverlay extends AbstractWidget
 		{
 			if(slot instanceof BlockedSlot && !slot.isActive())
 			{
-				blit(poseStack, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+				graphics.blit(LOCK, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}
@@ -85,7 +82,7 @@ public class LockOverlay extends AbstractWidget
 		if(event.getOverlay() == VanillaGuiOverlay.HOTBAR.type())
 		{
 			Minecraft mc = Minecraft.getInstance();
-			PoseStack poseStack = event.getPoseStack();
+			GuiGraphics graphics = event.getGuiGraphics();
 			if(!InventoryFree.appliesTo(mc.player) || ClientData.getAvailableSlots() >= 9)
 				return;
 			
@@ -102,13 +99,11 @@ public class LockOverlay extends AbstractWidget
 					{
 						int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 						int y = (scaledHeight - 16) - 3;
-						drawItem(poseStack, lockedInv.getStack(slot.getSlotIndex()), mc, x, y);
+						drawItem(graphics, lockedInv.getStack(slot.getSlotIndex()), mc, x, y);
 					}
 				}
 			});
 			
-			RenderSystem.setShader(GameRenderer::getPositionTexShader);
-			RenderSystem.setShaderTexture(0, LOCK);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
@@ -119,18 +114,18 @@ public class LockOverlay extends AbstractWidget
 				{
 					int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 					int y = (scaledHeight - 16) - 3;
-					blit(poseStack, x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+					graphics.blit(LOCK, x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
 				}
 			}
 		}
 	}
 	
-	private static void drawItem(PoseStack poseStack, ItemStack stack, Minecraft mc, int x, int y)
+	private static void drawItem(GuiGraphics graphics, ItemStack stack, Minecraft mc, int x, int y)
 	{
 		if(!stack.isEmpty())
 		{
-			mc.getItemRenderer().renderAndDecorateItem(poseStack, stack, x, y);
-			mc.getItemRenderer().renderGuiItemDecorations(poseStack, mc.font, stack, x, y, null);
+			graphics.renderItem(stack, x, y);
+			graphics.renderItemDecorations(mc.font, stack, x, y);
 		}
 	}
 	

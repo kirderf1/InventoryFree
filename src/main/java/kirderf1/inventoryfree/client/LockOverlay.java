@@ -34,7 +34,9 @@ public class LockOverlay extends AbstractWidget
 {
 	private static final ResourceLocation LOCK = new ResourceLocation(InventoryFree.MOD_ID, "textures/item/lock.png");
 	
-	private static final int LOCK_BLIT = 500;
+	// Must be large enough that the lock texture is drawn on top of slot items and the gui background,
+	// but small enough that it is drawn behind floating/dragged items and item tooltips.
+	private static final int LOCK_BLIT = 200;
 	
 	private final AbstractContainerScreen<?> screen;
 	

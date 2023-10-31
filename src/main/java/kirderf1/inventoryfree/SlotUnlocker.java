@@ -6,12 +6,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.ICancellableEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,25 +28,25 @@ public class SlotUnlocker
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
-	public static void onRightClickItem(PlayerInteractEvent.RightClickItem event)
+	private static void onRightClickItem(PlayerInteractEvent.RightClickItem event)
 	{
 		onItemUsed(event);
 	}
 	
 	@SubscribeEvent
-	public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event)
+	private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event)
 	{
 		onItemUsed(event);
 	}
 	
 	@SubscribeEvent
-	public static void onEntityInteract(PlayerInteractEvent.EntityInteract event)
+	private static void onEntityInteract(PlayerInteractEvent.EntityInteract event)
 	{
 		onItemUsed(event);
 	}
 	
 	@SubscribeEvent
-	public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event)
+	private static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event)
 	{
 		onItemUsed(event);
 	}
@@ -53,7 +54,7 @@ public class SlotUnlocker
 	/**
 	 * Handles item right click on both logical sides to potentially consume the item and unlock a slot.
 	 */
-	private static void onItemUsed(PlayerInteractEvent event)
+	private static <E extends PlayerInteractEvent & ICancellableEvent> void onItemUsed(E event)
 	{
 		ItemStack stack = event.getItemStack();
 		int unlockedSlots = event.getSide() == LogicalSide.CLIENT ? ClientData.getUnlockedSlots()

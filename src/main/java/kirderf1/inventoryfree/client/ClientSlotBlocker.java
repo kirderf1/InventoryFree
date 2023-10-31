@@ -5,11 +5,11 @@ import kirderf1.inventoryfree.SlotBlocker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,21 +25,21 @@ public class ClientSlotBlocker
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
-	public static void onLogin(ClientPlayerNetworkEvent.LoggingIn event)
+	private static void onLogin(ClientPlayerNetworkEvent.LoggingIn event)
 	{
 		LocalPlayer player = Objects.requireNonNull(event.getPlayer());
 		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
-	public static void onRespawn(ClientPlayerNetworkEvent.Clone event)
+	private static void onRespawn(ClientPlayerNetworkEvent.Clone event)
 	{
 		LocalPlayer player = Objects.requireNonNull(event.getPlayer());
 		SlotBlocker.insertBlockedSlots(player.inventoryMenu, player, ClientData::getAvailableSlots);
 	}
 	
 	@SubscribeEvent
-	public static void onGuiOpened(ScreenEvent.Opening event)
+	private static void onGuiOpened(ScreenEvent.Opening event)
 	{
 		if(event.getScreen() instanceof AbstractContainerScreen<?> screen)
 		{
@@ -49,7 +49,7 @@ public class ClientSlotBlocker
 	}
 	
 	@SubscribeEvent
-	public static void onGuiInitialized(ScreenEvent.Init.Post event)
+	private static void onGuiInitialized(ScreenEvent.Init.Post event)
 	{
 		if(event.getScreen() instanceof AbstractContainerScreen<?> screen)
 		{

@@ -1,9 +1,7 @@
 package kirderf1.inventoryfree.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 /**
  * Basic packet interface. Contains more specific packet interfaces.
@@ -12,7 +10,7 @@ public interface Packet
 {
 	void encode(FriendlyByteBuf buffer);
 	
-	void consume(Supplier<NetworkEvent.Context> context);
+	void consume(NetworkEvent.Context context);
 	
 	/**
 	 * Interface for a packet going from server-side to client-side.
@@ -20,10 +18,10 @@ public interface Packet
 	interface ToClient extends Packet
 	{
 		@Override
-		default void consume(Supplier<NetworkEvent.Context> context)
+		default void consume(NetworkEvent.Context context)
 		{
-			context.get().enqueueWork(this::execute);
-			context.get().setPacketHandled(true);
+			context.enqueueWork(this::execute);
+			context.setPacketHandled(true);
 		}
 		
 		void execute();

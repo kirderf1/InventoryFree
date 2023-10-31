@@ -5,10 +5,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +25,7 @@ public class SlotBlocker
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
-	public static void onContainerOpened(PlayerContainerEvent.Open event)
+	private static void onContainerOpened(PlayerContainerEvent.Open event)
 	{
 		LOGGER.debug("Container being opened. Inserting custom inventory slots...");
 		ServerPlayer player = (ServerPlayer) event.getEntity();
@@ -33,7 +33,7 @@ public class SlotBlocker
 	}
 	
 	@SubscribeEvent
-	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
+	private static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
 		LOGGER.debug("Player logged in. Inserting custom inventory slots into the inventory container...");
 		ServerPlayer player = (ServerPlayer) event.getEntity();
@@ -41,7 +41,7 @@ public class SlotBlocker
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerClone(PlayerEvent.Clone event)
+	private static void onPlayerClone(PlayerEvent.Clone event)
 	{
 		LOGGER.debug("Player entity being cloned. Inserting custom inventory slots into the inventory container...");
 		ServerPlayer player = (ServerPlayer) event.getEntity();

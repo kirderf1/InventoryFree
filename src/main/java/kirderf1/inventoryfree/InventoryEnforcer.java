@@ -3,11 +3,11 @@ package kirderf1.inventoryfree;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +22,7 @@ public class InventoryEnforcer
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
-	public static void onTick(TickEvent.PlayerTickEvent event)
+	private static void onTick(TickEvent.PlayerTickEvent event)
 	{
 		if(event.side != LogicalSide.SERVER || event.phase != TickEvent.Phase.START)
 			return;
@@ -45,7 +45,7 @@ public class InventoryEnforcer
 	}
 	
 	@SubscribeEvent
-	public static void onItemPickup(EntityItemPickupEvent event)
+	private static void onItemPickup(EntityItemPickupEvent event)
 	{
 		if(InventoryFree.appliesTo(event.getEntity()))
 		{

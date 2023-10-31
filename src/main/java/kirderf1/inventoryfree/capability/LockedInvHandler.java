@@ -16,12 +16,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Collection;
 
@@ -32,7 +32,7 @@ import java.util.Collection;
 public class LockedInvHandler
 {
 	@SubscribeEvent
-	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
+	private static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		
@@ -45,8 +45,9 @@ public class LockedInvHandler
 	}
 	
 	// Perform this early as it adds drops that should be on equal stance to the player inventory
+	@SuppressWarnings("resource")
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void onDrops(LivingDropsEvent event)
+	private static void onDrops(LivingDropsEvent event)
 	{
 		LivingEntity entity = event.getEntity();
 		if(entity instanceof ServerPlayer player
@@ -67,7 +68,7 @@ public class LockedInvHandler
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerClone(PlayerEvent.Clone event)
+	private static void onPlayerClone(PlayerEvent.Clone event)
 	{
 		copyOverCap(event.getOriginal(), event.getEntity());
 	}
@@ -86,13 +87,13 @@ public class LockedInvHandler
 	}
 	
 	@SubscribeEvent
-	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
+	private static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event)
 	{
 		sendLockedInv((ServerPlayer) event.getEntity());
 	}
 	
 	@SubscribeEvent
-	public static void onGameModeChange(PlayerEvent.PlayerChangeGameModeEvent event)
+	private static void onGameModeChange(PlayerEvent.PlayerChangeGameModeEvent event)
 	{
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		onLockChange(player, PlayerData.getAvailableSlots(player, event.getNewGameMode()));

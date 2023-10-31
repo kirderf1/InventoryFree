@@ -3,10 +3,10 @@ package kirderf1.inventoryfree.client;
 import kirderf1.inventoryfree.SlotUnlocker;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 /**
  * Adds tooltip text to items which can unlock slots.
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.Mod;
 public class UnlockTooltipHandler
 {
 	@SubscribeEvent
-	public static void onTooltipEvent(ItemTooltipEvent event)
+	private static void onTooltipEvent(ItemTooltipEvent event)
 	{
 		if(SlotUnlocker.shouldUnlockWith(event.getItemStack(), ClientData.getUnlockedSlots()))
 		{

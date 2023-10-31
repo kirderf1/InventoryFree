@@ -14,12 +14,12 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
+import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.common.util.LazyOptional;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -36,7 +36,7 @@ public class LockOverlay extends AbstractWidget
 	
 	// Must be large enough that the lock texture is drawn on top of slot items and the gui background,
 	// but small enough that it is drawn behind floating/dragged items and item tooltips.
-	private static final int LOCK_BLIT = 200;
+	private static final int LOCK_BLIT = 220;
 	
 	private final AbstractContainerScreen<?> screen;
 	
@@ -79,7 +79,7 @@ public class LockOverlay extends AbstractWidget
 	}
 	
 	@SubscribeEvent
-	public static void onHotbarOverlay(RenderGuiOverlayEvent.Post event)
+	private static void onHotbarOverlay(RenderGuiOverlayEvent.Post event)
 	{
 		if(event.getOverlay() == VanillaGuiOverlay.HOTBAR.type())
 		{

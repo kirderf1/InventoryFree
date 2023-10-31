@@ -8,17 +8,16 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.server.ServerLifecycleHooks;
-import org.apache.commons.lang3.tuple.Pair;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 /**
  * The central mod class. Also holds the config and the player/slot conditions.
@@ -28,6 +27,7 @@ public class InventoryFree
 {
 	public static final String MOD_ID = "inventory_free";
 	
+	@SuppressWarnings("removal")
 	public InventoryFree()
 	{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
@@ -35,8 +35,8 @@ public class InventoryFree
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::onConfigReload);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(SlotUnlocker::verifyUnlockItem);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModCapabilities::register);
-		MinecraftForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
-		MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ModCapabilities::attachEntityCapability);
+		NeoForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
+		NeoForge.EVENT_BUS.addGenericListener(Entity.class, ModCapabilities::attachEntityCapability);
 	}
 	
 	private static void setup(FMLCommonSetupEvent event)
@@ -60,11 +60,11 @@ public class InventoryFree
 	 * Instance of the mod config.
 	 */
 	public static final Config CONFIG;
-	private static final ForgeConfigSpec configSpec;
+	private static final ModConfigSpec configSpec;
 	
 	static
 	{
-		Pair<Config, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Config::new);
+		var specPair = new ModConfigSpec.Builder().configure(Config::new);
 		CONFIG = specPair.getLeft();
 		configSpec = specPair.getRight();
 	}
@@ -75,14 +75,14 @@ public class InventoryFree
 	 */
 	public static class Config
 	{
-		public final ForgeConfigSpec.IntValue availableSlots;
-		public final ForgeConfigSpec.ConfigValue<String> unlockSlotItem;
-		public final ForgeConfigSpec.IntValue unlockedLostOnDeath;
-		public final ForgeConfigSpec.BooleanValue dropItemsInLockedSlots;
-		public final ForgeConfigSpec.EnumValue<SlotUnlocker.CostProgression> costProgression;
-		public final ForgeConfigSpec.IntValue costMultiplier;
+		public final ModConfigSpec.IntValue availableSlots;
+		public final ModConfigSpec.ConfigValue<String> unlockSlotItem;
+		public final ModConfigSpec.IntValue unlockedLostOnDeath;
+		public final ModConfigSpec.BooleanValue dropItemsInLockedSlots;
+		public final ModConfigSpec.EnumValue<SlotUnlocker.CostProgression> costProgression;
+		public final ModConfigSpec.IntValue costMultiplier;
 		
-		private Config(ForgeConfigSpec.Builder builder)
+		private Config(ModConfigSpec.Builder builder)
 		{
 			builder.push("options");
 			availableSlots = builder.comment("Defines the number of inventory slots that will be available.")

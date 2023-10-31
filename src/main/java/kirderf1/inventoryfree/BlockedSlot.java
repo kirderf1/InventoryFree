@@ -1,18 +1,22 @@
 package kirderf1.inventoryfree;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.BooleanSupplier;
 
 /**
  * A custom slot to replace any slots that might become blocked.
  * Wraps around the replaced slot to the same extent as {@link net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen.SlotWrapper}.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 @SuppressWarnings("JavadocReference")
 public class BlockedSlot extends Slot
 {

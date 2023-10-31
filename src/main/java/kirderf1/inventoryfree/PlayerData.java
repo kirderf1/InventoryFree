@@ -8,10 +8,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Handles the player-specific value for unlocked slots,
@@ -23,7 +23,7 @@ import net.minecraftforge.network.PacketDistributor;
 public class PlayerData
 {
 	@SubscribeEvent
-	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
+	private static void onLogin(PlayerEvent.PlayerLoggedInEvent event)
 	{
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		int unlockedSlots = getUnlockedSlots(player);
@@ -31,7 +31,7 @@ public class PlayerData
 	}
 	
 	@SubscribeEvent
-	public static void onClone(PlayerEvent.Clone event)
+	private static void onClone(PlayerEvent.Clone event)
 	{
 		int unlockedSlots = getUnlockedSlots((ServerPlayer) event.getEntity());
 		if(event.isWasDeath() && InventoryFree.CONFIG.unlockedLostOnDeath.get() != 0

@@ -52,7 +52,7 @@ A mod that frees you from a portion of your inventory, AKA disables slots in you
     mandatory=true #mandatory
 
     # The version range of the dependency
-    versionRange="[20.2,)" #mandatory
+    versionRange="[20.2.86,20.3)" #mandatory
 
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"

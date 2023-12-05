@@ -1,6 +1,7 @@
 package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.client.ClientData;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -12,7 +13,6 @@ import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,7 +80,7 @@ public class SlotUnlocker
 	public static boolean shouldUnlockWith(ItemStack stack, int unlockedSlots)
 	{
 		return InventoryFree.getAvailableSlots(unlockedSlots) != InventoryFree.getAvailableSlots(unlockedSlots + 1)
-				&& InventoryFree.CONFIG.unlockSlotItem.get().equals(String.valueOf(ForgeRegistries.ITEMS.getKey(stack.getItem())));
+				&& InventoryFree.CONFIG.unlockSlotItem.get().equals(String.valueOf(BuiltInRegistries.ITEM.getKey(stack.getItem())));
 	}
 	
 	/**
@@ -123,13 +123,13 @@ public class SlotUnlocker
 			return;	//If the string is empty, we can assume that it is intentionally not a valid item
 		
 		ResourceLocation itemId = ResourceLocation.tryParse(itemIdStr);
-		if (itemId == null || !ForgeRegistries.ITEMS.containsKey(itemId))
+		if (itemId == null || !BuiltInRegistries.ITEM.containsKey(itemId))
 		{
 			LOGGER.error("Not a valid id for the unlock item: {}", itemIdStr);
 			return;
 		}
 		
-		Item item = Objects.requireNonNull(ForgeRegistries.ITEMS.getValue(itemId));
+		Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.get(itemId));
 		
 		if(getRequiredItemCount(0, item.getDefaultInstance().getMaxStackSize()) == -1)
 			LOGGER.warn("Unlock item max stack size is lower than the cost to unlock the first slot. It will not be possible to unlock any slots with the item under these circumstances!");

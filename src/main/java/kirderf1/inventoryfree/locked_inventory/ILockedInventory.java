@@ -1,4 +1,4 @@
-package kirderf1.inventoryfree.capability;
+package kirderf1.inventoryfree.locked_inventory;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

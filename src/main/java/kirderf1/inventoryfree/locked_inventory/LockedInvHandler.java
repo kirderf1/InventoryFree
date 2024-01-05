@@ -1,6 +1,7 @@
-package kirderf1.inventoryfree.capability;
+package kirderf1.inventoryfree.locked_inventory;
 
 import kirderf1.inventoryfree.InventoryFree;
+import kirderf1.inventoryfree.ModCapabilities;
 import kirderf1.inventoryfree.PlayerData;
 import kirderf1.inventoryfree.network.LockedInvSyncPacket;
 import kirderf1.inventoryfree.network.PacketHandler;

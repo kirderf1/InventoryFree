@@ -1,6 +1,6 @@
 package kirderf1.inventoryfree.network;
 
-import kirderf1.inventoryfree.capability.ILockedInventory;
+import kirderf1.inventoryfree.locked_inventory.ILockedInventory;
 import kirderf1.inventoryfree.client.ClientCapabilityHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;

@@ -1,4 +1,4 @@
-package kirderf1.inventoryfree.capability;
+package kirderf1.inventoryfree.locked_inventory;
 
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemStackHandler;

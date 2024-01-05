@@ -1,7 +1,6 @@
 package kirderf1.inventoryfree;
 
-import kirderf1.inventoryfree.capability.LockedInvHandler;
-import kirderf1.inventoryfree.capability.ModCapabilities;
+import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
 import kirderf1.inventoryfree.network.PacketHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;

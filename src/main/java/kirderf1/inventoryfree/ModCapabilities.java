@@ -1,6 +1,8 @@
-package kirderf1.inventoryfree.capability;
+package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.InventoryFree;
+import kirderf1.inventoryfree.locked_inventory.ILockedInventory;
+import kirderf1.inventoryfree.locked_inventory.LockedInventory;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;

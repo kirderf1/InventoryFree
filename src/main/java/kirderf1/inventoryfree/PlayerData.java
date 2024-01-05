@@ -1,6 +1,6 @@
 package kirderf1.inventoryfree;
 
-import kirderf1.inventoryfree.capability.LockedInvHandler;
+import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
 import kirderf1.inventoryfree.network.PacketHandler;
 import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
 import net.minecraft.nbt.CompoundTag;

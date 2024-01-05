@@ -1,8 +1,8 @@
 package kirderf1.inventoryfree.client;
 
 import kirderf1.inventoryfree.InventoryFree;
-import kirderf1.inventoryfree.capability.LockedInvHandler;
-import kirderf1.inventoryfree.capability.ModCapabilities;
+import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
+import kirderf1.inventoryfree.ModCapabilities;
 import kirderf1.inventoryfree.network.LockedInvSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;

@@ -1,7 +1,7 @@
 package kirderf1.inventoryfree.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import kirderf1.inventoryfree.BlockedSlot;
+import kirderf1.inventoryfree.slot_blocking.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.locked_inventory.ILockedInventory;
 import kirderf1.inventoryfree.ModCapabilities;

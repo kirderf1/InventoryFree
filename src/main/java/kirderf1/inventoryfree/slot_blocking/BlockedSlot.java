@@ -1,4 +1,4 @@
-package kirderf1.inventoryfree;
+package kirderf1.inventoryfree.slot_blocking;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.MethodsReturnNonnullByDefault;

@@ -1,5 +1,7 @@
-package kirderf1.inventoryfree;
+package kirderf1.inventoryfree.slot_blocking;
 
+import kirderf1.inventoryfree.InventoryFree;
+import kirderf1.inventoryfree.PlayerData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;

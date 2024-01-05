@@ -1,7 +1,7 @@
 package kirderf1.inventoryfree.client;
 
 import kirderf1.inventoryfree.InventoryFree;
-import kirderf1.inventoryfree.SlotBlocker;
+import kirderf1.inventoryfree.slot_blocking.SlotBlocker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;

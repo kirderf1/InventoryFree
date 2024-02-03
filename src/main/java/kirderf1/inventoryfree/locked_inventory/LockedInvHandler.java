@@ -3,8 +3,6 @@ package kirderf1.inventoryfree.locked_inventory;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.PlayerData;
 import kirderf1.inventoryfree.network.LockedInvSyncPayload;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -106,7 +104,7 @@ public class LockedInvHandler
 	// Slots provided as an argument for situations where this is called during an event before the player state has properly updated
 	public static void onLockChange(ServerPlayer player, int slots)
 	{
-		int prevSlots = getPrevAvailableSlots(player);
+		int prevSlots = Mth.clamp(player.getData(InventoryFree.AVAILABLE_SLOTS_CACHE), 0, 36);
 		if(slots != prevSlots)
 		{
 			if(slots > prevSlots)
@@ -114,16 +112,8 @@ public class LockedInvHandler
 			if(slots < prevSlots && !InventoryFree.CONFIG.dropItemsInLockedSlots.get())
 				onLockSlot(player, slots, prevSlots - 1);
 			
-			PlayerData.getOrCreatePersistentTag(player).putInt("slot_cache", slots);
+			player.setData(InventoryFree.AVAILABLE_SLOTS_CACHE, slots);
 		}
-	}
-	
-	private static int getPrevAvailableSlots(ServerPlayer player)
-	{
-		CompoundTag nbt = PlayerData.getPersistentTag(player);
-		return nbt.contains("slot_cache", Tag.TAG_ANY_NUMERIC)
-				? Mth.clamp(nbt.getInt("slot_cache"), 0, 36)
-				: 36;
 	}
 	
 	/**

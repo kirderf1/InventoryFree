@@ -2,10 +2,8 @@ package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
 import kirderf1.inventoryfree.network.UnlockedSlotsPayload;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -29,16 +27,18 @@ public class PlayerData
 	}
 	
 	@SubscribeEvent
-	private static void onClone(PlayerEvent.Clone event)
+	private static void lockSlotsOnRespawn(PlayerEvent.PlayerRespawnEvent event)
 	{
-		int unlockedSlots = getUnlockedSlots((ServerPlayer) event.getEntity());
-		if(event.isWasDeath() && InventoryFree.CONFIG.unlockedLostOnDeath.get() != 0
-				&& unlockedSlots != 0)
+		if(event.isEndConquered() || !(event.getEntity() instanceof ServerPlayer player))
+			return;
+		
+		int unlockedSlots = getUnlockedSlots(player);
+		if(InventoryFree.CONFIG.unlockedLostOnDeath.get() != 0 && unlockedSlots != 0)
 		{
 			if(InventoryFree.CONFIG.unlockedLostOnDeath.get() < 0)
-				setUnlockedSlots((ServerPlayer) event.getEntity(), 0);
-			else setUnlockedSlots((ServerPlayer) event.getEntity(), Math.min(unlockedSlots,
-					Math.max(0, unlockedSlots - InventoryFree.CONFIG.unlockedLostOnDeath.get())));
+				setUnlockedSlots(player, 0);
+			else
+				setUnlockedSlots(player, Mth.clamp(unlockedSlots - InventoryFree.CONFIG.unlockedLostOnDeath.get(), 0, unlockedSlots));
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class PlayerData
 	 */
 	public static int getUnlockedSlots(ServerPlayer player)
 	{
-		return getPersistentTag(player).getInt("unlocked_slots");
+		return player.getData(InventoryFree.UNLOCKED_SLOTS);
 	}
 	
 	/**
@@ -76,10 +76,7 @@ public class PlayerData
 	 */
 	public static void unlockSlots(ServerPlayer player, int amount)
 	{
-		CompoundTag nbt = getOrCreatePersistentTag(player);
-		nbt.putInt("unlocked_slots", nbt.getInt("unlocked_slots") + amount);
-		player.connection.send(new UnlockedSlotsPayload(nbt.getInt("unlocked_slots")));
-		LockedInvHandler.onLockChange(player);
+		setUnlockedSlots(player, player.getData(InventoryFree.UNLOCKED_SLOTS) + amount);
 	}
 	
 	/**
@@ -88,23 +85,8 @@ public class PlayerData
 	 */
 	public static void setUnlockedSlots(ServerPlayer player, int unlockedSlots)
 	{
-		getOrCreatePersistentTag(player).putInt("unlocked_slots", unlockedSlots);
+		player.setData(InventoryFree.UNLOCKED_SLOTS, unlockedSlots);
 		player.connection.send(new UnlockedSlotsPayload(unlockedSlots));
 		LockedInvHandler.onLockChange(player);
-	}
-	
-	public static CompoundTag getPersistentTag(ServerPlayer player)
-	{
-		return player.getPersistentData().getCompound(Player.PERSISTED_NBT_TAG).getCompound(InventoryFree.MOD_ID);
-	}
-	public static CompoundTag getOrCreatePersistentTag(ServerPlayer player)
-	{
-		return getOrCreate(getOrCreate(player.getPersistentData(), Player.PERSISTED_NBT_TAG), InventoryFree.MOD_ID);
-	}
-	private static CompoundTag getOrCreate(CompoundTag nbt, String str)
-	{
-		if(!nbt.contains(str, Tag.TAG_COMPOUND))
-			nbt.put(str, new CompoundTag());
-		return nbt.getCompound(str);
 	}
 }

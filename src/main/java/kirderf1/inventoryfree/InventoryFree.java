@@ -1,5 +1,6 @@
 package kirderf1.inventoryfree;
 
+import com.mojang.serialization.Codec;
 import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
 import kirderf1.inventoryfree.locked_inventory.LockedInventory;
 import net.minecraft.server.MinecraftServer;
@@ -32,6 +33,10 @@ public class InventoryFree
 	private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MOD_ID);
 	public static final Supplier<AttachmentType<LockedInventory>> LOCKED_INVENTORY = ATTACHMENT_REGISTER.register("locked_inventory",
 			() -> AttachmentType.serializable(LockedInventory::new).copyOnDeath().build());
+	public static final Supplier<AttachmentType<Integer>> UNLOCKED_SLOTS = ATTACHMENT_REGISTER.register("unlocked_slots",
+			() -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build());
+	public static final Supplier<AttachmentType<Integer>> AVAILABLE_SLOTS_CACHE = ATTACHMENT_REGISTER.register("available_slots_cache",
+			() -> AttachmentType.builder(() -> 36).serialize(Codec.INT).copyOnDeath().build());
 	
 	public InventoryFree(IEventBus modEventBus)
 	{

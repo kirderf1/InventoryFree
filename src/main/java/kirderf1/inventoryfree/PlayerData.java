@@ -1,8 +1,7 @@
 package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
-import kirderf1.inventoryfree.network.PacketHandler;
-import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
+import kirderf1.inventoryfree.network.UnlockedSlotsPayload;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,12 +10,11 @@ import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Handles the player-specific value for unlocked slots,
  * by providing accessors and syncing it to client by
- * sending a {@link UnlockedSlotsPacket} at appropriate times.
+ * sending a {@link UnlockedSlotsPayload} at appropriate times.
  * It also handles loss of unlocks on death.
  */
 @Mod.EventBusSubscriber
@@ -27,7 +25,7 @@ public class PlayerData
 	{
 		ServerPlayer player = (ServerPlayer) event.getEntity();
 		int unlockedSlots = getUnlockedSlots(player);
-		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(unlockedSlots));
+		player.connection.send(new UnlockedSlotsPayload(unlockedSlots));
 	}
 	
 	@SubscribeEvent
@@ -80,7 +78,7 @@ public class PlayerData
 	{
 		CompoundTag nbt = getOrCreatePersistentTag(player);
 		nbt.putInt("unlocked_slots", nbt.getInt("unlocked_slots") + amount);
-		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(nbt.getInt("unlocked_slots")));
+		player.connection.send(new UnlockedSlotsPayload(nbt.getInt("unlocked_slots")));
 		LockedInvHandler.onLockChange(player);
 	}
 	
@@ -91,7 +89,7 @@ public class PlayerData
 	public static void setUnlockedSlots(ServerPlayer player, int unlockedSlots)
 	{
 		getOrCreatePersistentTag(player).putInt("unlocked_slots", unlockedSlots);
-		PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new UnlockedSlotsPacket(unlockedSlots));
+		player.connection.send(new UnlockedSlotsPayload(unlockedSlots));
 		LockedInvHandler.onLockChange(player);
 	}
 	

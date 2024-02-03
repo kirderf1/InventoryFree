@@ -3,8 +3,7 @@ package kirderf1.inventoryfree.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import kirderf1.inventoryfree.slot_blocking.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
-import kirderf1.inventoryfree.locked_inventory.ILockedInventory;
-import kirderf1.inventoryfree.ModCapabilities;
+import kirderf1.inventoryfree.locked_inventory.LockedInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -19,14 +18,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
 import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
-import net.neoforged.neoforge.common.util.LazyOptional;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Optional;
 
 /**
  * A widget which will draw an icon on top of all slots which are blocked.
  * It is also responsible for drawing the icon on the overlay hotbar when appropriate.
- * Any items in the {@link ILockedInventory} capability will be drawn underneath the icon.
+ * Any items in the {@link LockedInventory} capability will be drawn underneath the icon.
  */
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
@@ -131,13 +130,9 @@ public class LockOverlay extends AbstractWidget
 		}
 	}
 	
-	private static LazyOptional<ILockedInventory> getLockedInv(Minecraft mc)
+	private static Optional<LockedInventory> getLockedInv(Minecraft mc)
 	{
-		if(mc.player != null)
-		{
-			return mc.player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY);
-		} else
-			return LazyOptional.empty();
+		return Optional.ofNullable(mc.player).map(player -> player.getData(InventoryFree.LOCKED_INVENTORY));
 	}
 	
 	@Override

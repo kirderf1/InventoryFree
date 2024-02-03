@@ -1,22 +1,25 @@
 package kirderf1.inventoryfree;
 
 import kirderf1.inventoryfree.locked_inventory.LockedInvHandler;
-import kirderf1.inventoryfree.network.PacketHandler;
+import kirderf1.inventoryfree.locked_inventory.LockedInventory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
+
+import java.util.function.Supplier;
 
 /**
  * The central mod class. Also holds the config and the player/slot conditions.
@@ -26,21 +29,17 @@ public class InventoryFree
 {
 	public static final String MOD_ID = "inventory_free";
 	
-	@SuppressWarnings("removal")
-	public InventoryFree()
+	private static final DeferredRegister<AttachmentType<?>> ATTACHMENT_REGISTER = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MOD_ID);
+	public static final Supplier<AttachmentType<LockedInventory>> LOCKED_INVENTORY = ATTACHMENT_REGISTER.register("locked_inventory",
+			() -> AttachmentType.serializable(LockedInventory::new).copyOnDeath().build());
+	
+	public InventoryFree(IEventBus modEventBus)
 	{
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::setup);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(InventoryFree::onConfigReload);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(SlotUnlocker::verifyUnlockItem);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(ModCapabilities::register);
+		modEventBus.addListener(InventoryFree::onConfigReload);
+		modEventBus.addListener(SlotUnlocker::verifyUnlockItem);
+		ATTACHMENT_REGISTER.register(modEventBus);
 		NeoForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
-		NeoForge.EVENT_BUS.addGenericListener(Entity.class, ModCapabilities::attachEntityCapability);
-	}
-	
-	private static void setup(FMLCommonSetupEvent event)
-	{
-		PacketHandler.registerPackets();
 	}
 	
 	private static void onConfigReload(ModConfigEvent.Reloading event)

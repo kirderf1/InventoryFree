@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.5'
+    id 'net.neoforged.gradle.userdev' version '7.0.80'
 }
 
 version = mod_version
@@ -45,6 +45,19 @@ runs {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
+}
+
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+            minecraft_version_range: minecraft_version_range,
+            neo_version_range: neo_version_range,
+            mod_version: mod_version,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml']) {
+        expand replaceProperties + [project: project]
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {

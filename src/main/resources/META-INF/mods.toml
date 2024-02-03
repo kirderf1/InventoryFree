@@ -18,7 +18,7 @@ license="MIT"
 modId="inventory_free" #mandatory
 
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
+version="${mod_version}" #mandatory
 
 # A display name for the mod
 displayName="Inventory-Free" #mandatory
@@ -49,10 +49,10 @@ A mod that frees you from a portion of your inventory, AKA disables slots in you
     modId="neoforge" #mandatory
 
     # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
+    type="required" #mandatory
 
     # The version range of the dependency
-    versionRange="[20.2.86,20.3)" #mandatory
+    versionRange="${neo_version_range}" #mandatory
 
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
@@ -62,7 +62,7 @@ A mod that frees you from a portion of your inventory, AKA disables slots in you
 # Here's another dependency
 [[dependencies.inventory_free]]
     modId="minecraft"
-    mandatory=true
-    versionRange="[1.20.2,1.21)"
+    type="required"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

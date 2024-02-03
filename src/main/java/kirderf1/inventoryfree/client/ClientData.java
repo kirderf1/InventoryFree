@@ -1,7 +1,10 @@
 package kirderf1.inventoryfree.client;
 
 import kirderf1.inventoryfree.InventoryFree;
-import kirderf1.inventoryfree.network.UnlockedSlotsPacket;
+import kirderf1.inventoryfree.network.LockedInvSyncPayload;
+import kirderf1.inventoryfree.network.UnlockedSlotsPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * Client-side version of {@link kirderf1.inventoryfree.PlayerData}.
@@ -21,8 +24,15 @@ public class ClientData
 		return unlockedSlots;
 	}
 	
-	public static void onPacket(UnlockedSlotsPacket packet)
+	public static void handle(UnlockedSlotsPayload payload)
 	{
-		unlockedSlots = packet.unlockedSlots();
+		unlockedSlots = payload.unlockedSlots();
+	}
+	
+	public static void handle(LockedInvSyncPayload payload)
+	{
+		Player player = Minecraft.getInstance().player;
+		if(player != null)
+			player.getData(InventoryFree.LOCKED_INVENTORY).deserializeNBT(payload.nbt());
 	}
 }

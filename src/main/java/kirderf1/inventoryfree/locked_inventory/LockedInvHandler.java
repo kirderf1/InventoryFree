@@ -1,19 +1,15 @@
 package kirderf1.inventoryfree.locked_inventory;
 
 import kirderf1.inventoryfree.InventoryFree;
-import kirderf1.inventoryfree.ModCapabilities;
 import kirderf1.inventoryfree.PlayerData;
-import kirderf1.inventoryfree.network.LockedInvSyncPacket;
-import kirderf1.inventoryfree.network.PacketHandler;
+import kirderf1.inventoryfree.network.LockedInvSyncPayload;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
@@ -22,7 +18,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Collection;
 
@@ -54,37 +49,15 @@ public class LockedInvHandler
 		if(entity instanceof ServerPlayer player
 				&& !entity.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
 		{
-			player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
-				// Add drops from capability
-				Collection<ItemEntity> oldCapture = player.captureDrops(event.getDrops());
-				lockedInv.getAndClearStacks().forEach(stack -> {
-					// Only add droppable items
-					if(!stack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(stack))
-						player.drop(stack, true, false);
-				});
-				player.captureDrops(oldCapture);
-				sendLockedInv(player);
+			Collection<ItemEntity> oldCapture = player.captureDrops(event.getDrops());
+			player.getData(InventoryFree.LOCKED_INVENTORY).getAndClearStacks().forEach(stack -> {
+				// Only add droppable items
+				if(!stack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(stack))
+					player.drop(stack, true, false);
 			});
+			player.captureDrops(oldCapture);
+			sendLockedInv(player);
 		}
-	}
-	
-	@SubscribeEvent
-	private static void onPlayerClone(PlayerEvent.Clone event)
-	{
-		copyOverCap(event.getOriginal(), event.getEntity());
-	}
-	
-	public static void copyOverCap(Player oldPlayer, Player newPlayer)
-	{
-		oldPlayer.reviveCaps();
-		oldPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(oldInv ->
-				newPlayer.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(newInv -> {
-					
-					ListTag nbt = oldInv.serializeNBT();
-					newInv.deserializeNBT(nbt);
-				})
-		);
-		oldPlayer.invalidateCaps();
 	}
 	
 	@SubscribeEvent
@@ -158,20 +131,19 @@ public class LockedInvHandler
 	 */
 	private static void onLockSlot(ServerPlayer player, int slotMin, int slotMax)
 	{
-		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
-			boolean changed = false;
-			for(int slot = slotMin; slot <= slotMax; slot++)
+		LockedInventory lockedInv = player.getData(InventoryFree.LOCKED_INVENTORY);
+		boolean changed = false;
+		for(int slot = slotMin; slot <= slotMax; slot++)
+		{
+			if(lockedInv.getStack(slot).isEmpty())
 			{
-				if(lockedInv.getStack(slot).isEmpty())
-				{
-					ItemStack stack = player.getInventory().removeItemNoUpdate(slot);
-					lockedInv.putStack(slot, stack);
-					changed |= !stack.isEmpty();
-				}
+				ItemStack stack = player.getInventory().removeItemNoUpdate(slot);
+				lockedInv.putStack(slot, stack);
+				changed |= !stack.isEmpty();
 			}
-			if(changed)
-				sendLockedInv(player);
-		});
+		}
+		if(changed)
+			sendLockedInv(player);
 	}
 	
 	/**
@@ -179,42 +151,38 @@ public class LockedInvHandler
 	 */
 	private static void onUnlockSlot(ServerPlayer player, int slotMin, int slotMax)
 	{
-		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv -> {
-			boolean changed = false;
-			for(int slot = slotMin; slot <= slotMax; slot++)
+		LockedInventory lockedInv = player.getData(InventoryFree.LOCKED_INVENTORY);
+		boolean changed = false;
+		for(int slot = slotMin; slot <= slotMax; slot++)
+		{
+			ItemStack stack = lockedInv.takeStack(slot);
+			if(!stack.isEmpty())
 			{
-				ItemStack stack = lockedInv.takeStack(slot);
-				if(!stack.isEmpty())
-				{
-					if(player.getInventory().getItem(slot).isEmpty())
-						player.getInventory().setItem(slot, stack);
-					else player.drop(stack, true, false);
-					changed = true;
-				}
+				if(player.getInventory().getItem(slot).isEmpty())
+					player.getInventory().setItem(slot, stack);
+				else player.drop(stack, true, false);
+				changed = true;
 			}
-			if(changed)
-				sendLockedInv(player);
-		});
+		}
+		if(changed)
+			sendLockedInv(player);
 	}
 	
 	private static void dropLockedInvItems(ServerPlayer player)
 	{
-		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv ->
+		LockedInventory lockedInv = player.getData(InventoryFree.LOCKED_INVENTORY);
+		boolean changed = false;
+		for(ItemStack stack : lockedInv.getAndClearStacks())
 		{
-			boolean changed = false;
-			for(ItemStack stack : lockedInv.getAndClearStacks())
-			{
-				player.drop(stack, true, false);
-				changed = true;
-			}
-			if(changed)
-				sendLockedInv(player);
-		});
+			player.drop(stack, true, false);
+			changed = true;
+		}
+		if(changed)
+			sendLockedInv(player);
 	}
 	
 	public static void sendLockedInv(ServerPlayer player)
 	{
-		player.getCapability(ModCapabilities.LOCKED_INV_CAPABILITY).ifPresent(lockedInv ->
-				PacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), LockedInvSyncPacket.makePacket(lockedInv)));
+		player.connection.send(LockedInvSyncPayload.makePacket(player.getData(InventoryFree.LOCKED_INVENTORY)));
 	}
 }

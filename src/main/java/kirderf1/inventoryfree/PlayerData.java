@@ -6,7 +6,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 /**
@@ -15,8 +15,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
  * sending a {@link UnlockedSlotsPayload} at appropriate times.
  * It also handles loss of unlocks on death.
  */
-@Mod.EventBusSubscriber
-public class PlayerData
+@EventBusSubscriber(modid = InventoryFree.MOD_ID)
+public final class PlayerData
 {
 	@SubscribeEvent
 	private static void onLogin(PlayerEvent.PlayerLoggedInEvent event)

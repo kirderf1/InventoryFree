@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import org.apache.logging.log4j.LogManager;
@@ -19,8 +19,8 @@ import java.util.Objects;
  * Same as {@link SlotBlocker}, but for client-side events.
  * Is also responsible for add the {@link LockOverlay} to new container screens.
  */
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
-public class ClientSlotBlocker
+@EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
+public final class ClientSlotBlocker
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	

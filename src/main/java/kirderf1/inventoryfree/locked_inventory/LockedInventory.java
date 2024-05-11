@@ -1,6 +1,7 @@
 package kirderf1.inventoryfree.locked_inventory;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
@@ -54,25 +55,24 @@ public final class LockedInventory implements INBTSerializable<ListTag>
 	}
 	
 	@Override
-	public ListTag serializeNBT()
+	public ListTag serializeNBT(HolderLookup.Provider registries)
 	{
 		ListTag list = new ListTag();
-		for (int i = 0; i < 36; i++)
+		for(int i = 0; i < 36; i++)
 		{
 			ItemStack stack = getStack(i);
-			if (!stack.isEmpty())
+			if(!stack.isEmpty())
 			{
 				CompoundTag itemTag = new CompoundTag();
 				itemTag.putInt("Slot", i);
-				stack.save(itemTag);
-				list.add(itemTag);
+				list.add(stack.save(registries, itemTag));
 			}
 		}
 		return list;
 	}
 	
 	@Override
-	public void deserializeNBT(ListTag list)
+	public void deserializeNBT(HolderLookup.Provider registries, ListTag list)
 	{
 		getAndClearStacks();
 		
@@ -82,7 +82,7 @@ public final class LockedInventory implements INBTSerializable<ListTag>
 			int slot = itemTag.getInt("Slot");
 			
 			if(slot >= 0 && slot < 36)
-				putStack(slot, ItemStack.of(itemTag));
+				putStack(slot, ItemStack.parseOptional(registries, itemTag));
 		}
 	}
 }

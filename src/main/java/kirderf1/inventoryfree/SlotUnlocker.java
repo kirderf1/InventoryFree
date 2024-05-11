@@ -5,12 +5,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.apache.logging.log4j.LogManager;
@@ -22,56 +21,71 @@ import java.util.function.IntUnaryOperator;
 /**
  * Responsible for unlocking slots when using a configured item.
  */
-@Mod.EventBusSubscriber
-public class SlotUnlocker
+@EventBusSubscriber(modid = InventoryFree.MOD_ID)
+public final class SlotUnlocker
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
 	private static void onRightClickItem(PlayerInteractEvent.RightClickItem event)
 	{
-		onItemUsed(event);
+		if(tryUseUnlockItem(event.getItemStack(), event.getEntity()))
+		{
+			event.setCanceled(true);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+		}
 	}
 	
 	@SubscribeEvent
 	private static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event)
 	{
-		onItemUsed(event);
+		if(tryUseUnlockItem(event.getItemStack(), event.getEntity()))
+		{
+			event.setCanceled(true);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+		}
 	}
 	
 	@SubscribeEvent
 	private static void onEntityInteract(PlayerInteractEvent.EntityInteract event)
 	{
-		onItemUsed(event);
+		if(tryUseUnlockItem(event.getItemStack(), event.getEntity()))
+		{
+			event.setCanceled(true);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+		}
 	}
 	
 	@SubscribeEvent
 	private static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event)
 	{
-		onItemUsed(event);
+		if(tryUseUnlockItem(event.getItemStack(), event.getEntity()))
+		{
+			event.setCanceled(true);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+		}
 	}
 	
 	/**
 	 * Handles item right click on both logical sides to potentially consume the item and unlock a slot.
 	 */
-	private static <E extends PlayerInteractEvent & ICancellableEvent> void onItemUsed(E event)
+	private static boolean tryUseUnlockItem(ItemStack stack, Player player)
 	{
-		ItemStack stack = event.getItemStack();
-		int unlockedSlots = event.getSide() == LogicalSide.CLIENT ? ClientData.getUnlockedSlots()
-				: PlayerData.getUnlockedSlots((ServerPlayer) event.getEntity());
+		int unlockedSlots = player instanceof ServerPlayer serverPlayer
+				? PlayerData.getUnlockedSlots(serverPlayer)
+				: ClientData.getUnlockedSlots();
 		
-		if(shouldUnlockWith(stack, unlockedSlots))
-		{
-			int requiredCount = getRequiredItemCount(unlockedSlots, stack.getMaxStackSize());
-			if(requiredCount != -1 && stack.getCount() >= requiredCount)
-			{
-				event.setCanceled(true);
-				event.setCancellationResult(InteractionResult.SUCCESS);
-				stack.shrink(requiredCount);
-				if(event.getSide() == LogicalSide.SERVER)
-					PlayerData.unlockSlots((ServerPlayer) event.getEntity(), 1);
-			}
-		}
+		if(!shouldUnlockWith(stack, unlockedSlots))
+			return false;
+		
+		int requiredCount = getRequiredItemCount(unlockedSlots, stack.getMaxStackSize());
+		if(requiredCount == -1 || stack.getCount() < requiredCount)
+			return false;
+		
+		stack.shrink(requiredCount);
+		if(player instanceof ServerPlayer serverPlayer)
+			PlayerData.unlockSlots(serverPlayer, 1);
+		return true;
 	}
 	
 	/**

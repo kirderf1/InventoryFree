@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +21,8 @@ import java.util.function.Supplier;
  * The common class for inserting our custom slots into container menus.
  * Listens to some server-side events to handle new container menus.
  */
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
-public class SlotBlocker
+@EventBusSubscriber(modid = InventoryFree.MOD_ID)
+public final class SlotBlocker
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	

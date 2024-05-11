@@ -3,6 +3,7 @@ package kirderf1.inventoryfree.locked_inventory;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.PlayerData;
 import kirderf1.inventoryfree.network.LockedInvSyncPayload;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -13,7 +14,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
@@ -22,8 +23,8 @@ import java.util.Collection;
 /**
  * Handles events and functionality surrounding ILockedInventory
  */
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
-public class LockedInvHandler
+@EventBusSubscriber(modid = InventoryFree.MOD_ID)
+public final class LockedInvHandler
 {
 	@SubscribeEvent
 	private static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
@@ -173,6 +174,7 @@ public class LockedInvHandler
 	
 	public static void sendLockedInv(ServerPlayer player)
 	{
-		player.connection.send(LockedInvSyncPayload.makePacket(player.getData(InventoryFree.LOCKED_INVENTORY)));
+		ListTag nbt = player.getData(InventoryFree.LOCKED_INVENTORY).serializeNBT(player.registryAccess());
+		player.connection.send(new LockedInvSyncPayload(nbt));
 	}
 }

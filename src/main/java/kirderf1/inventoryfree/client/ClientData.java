@@ -33,6 +33,6 @@ public class ClientData
 	{
 		Player player = Minecraft.getInstance().player;
 		if(player != null)
-			player.getData(InventoryFree.LOCKED_INVENTORY).deserializeNBT(payload.nbt());
+			player.getData(InventoryFree.LOCKED_INVENTORY).deserializeNBT(player.registryAccess(), payload.nbt());
 	}
 }

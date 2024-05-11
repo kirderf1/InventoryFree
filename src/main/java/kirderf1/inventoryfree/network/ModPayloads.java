@@ -3,24 +3,23 @@ package kirderf1.inventoryfree.network;
 import kirderf1.inventoryfree.InventoryFree;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.handling.IPlayPayloadHandler;
-import net.neoforged.neoforge.network.registration.IDirectionAwarePayloadHandlerBuilder;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
 /**
  * Sets up the network channel and registers packets to it.
  */
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = InventoryFree.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
 public final class ModPayloads
 {
 	@SubscribeEvent
-	private static void register(RegisterPayloadHandlerEvent event)
+	private static void register(RegisterPayloadHandlersEvent event)
 	{
 		event.registrar(InventoryFree.MOD_ID)
 				.versioned("1")
-				.play(UnlockedSlotsPayload.ID, UnlockedSlotsPayload::read, ToClientPayload::handler)
-				.play(LockedInvSyncPayload.ID, LockedInvSyncPayload::read, ToClientPayload::handler);
+				.playToClient(UnlockedSlotsPayload.TYPE, UnlockedSlotsPayload.STREAM_CODEC, ToClientPayload.handler())
+				.playToClient(LockedInvSyncPayload.TYPE, LockedInvSyncPayload.STREAM_CODEC, ToClientPayload.handler());
 	}
 	
 	/**
@@ -30,9 +29,9 @@ public final class ModPayloads
 	{
 		void execute();
 		
-		static <P extends ToClientPayload> void handler(IDirectionAwarePayloadHandlerBuilder<P, IPlayPayloadHandler<P>> builder)
+		static <P extends ToClientPayload> IPayloadHandler<P> handler()
 		{
-			builder.client((payload, context) -> context.workHandler().execute(payload::execute));
+			return (payload, context) -> payload.execute();
 		}
 	}
 }

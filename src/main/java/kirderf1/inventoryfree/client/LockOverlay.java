@@ -1,9 +1,9 @@
 package kirderf1.inventoryfree.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import kirderf1.inventoryfree.slot_blocking.BlockedSlot;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.locked_inventory.LockedInventory;
+import kirderf1.inventoryfree.slot_blocking.BlockedSlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -15,9 +15,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
@@ -28,8 +28,8 @@ import java.util.Optional;
  * Any items in the {@link LockedInventory} capability will be drawn underneath the icon.
  */
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
-public class LockOverlay extends AbstractWidget
+@EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
+public final class LockOverlay extends AbstractWidget
 {
 	private static final ResourceLocation LOCK = new ResourceLocation(InventoryFree.MOD_ID, "textures/item/lock.png");
 	
@@ -78,9 +78,9 @@ public class LockOverlay extends AbstractWidget
 	}
 	
 	@SubscribeEvent
-	private static void onHotbarOverlay(RenderGuiOverlayEvent.Post event)
+	private static void onHotbarOverlay(RenderGuiLayerEvent.Post event)
 	{
-		if(event.getOverlay() == VanillaGuiOverlay.HOTBAR.type())
+		if(event.getName().equals(VanillaGuiLayers.HOTBAR))
 		{
 			Minecraft mc = Minecraft.getInstance();
 			GuiGraphics graphics = event.getGuiGraphics();

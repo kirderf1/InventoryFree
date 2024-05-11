@@ -1,18 +1,19 @@
 package kirderf1.inventoryfree.client;
 
+import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.SlotUnlocker;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 /**
  * Adds tooltip text to items which can unlock slots.
  */
-@Mod.EventBusSubscriber(value = Dist.CLIENT)
-public class UnlockTooltipHandler
+@EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
+public final class UnlockTooltipHandler
 {
 	@SubscribeEvent
 	private static void onTooltipEvent(ItemTooltipEvent event)

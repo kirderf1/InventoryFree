@@ -6,10 +6,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,32 +17,32 @@ import org.apache.logging.log4j.Logger;
  * enforcing that blocked inventory slots are empty,
  * but also for stopping item pickups when appropriate.
  */
-@Mod.EventBusSubscriber(modid = InventoryFree.MOD_ID)
-public class InventoryEnforcer
+@EventBusSubscriber(modid = InventoryFree.MOD_ID)
+public final class InventoryEnforcer
 {
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	@SubscribeEvent
-	private static void onTick(TickEvent.PlayerTickEvent event)
+	private static void onTick(PlayerTickEvent.Pre event)
 	{
-		if(event.side != LogicalSide.SERVER || event.phase != TickEvent.Phase.START)
+		if(!(event.getEntity() instanceof ServerPlayer player))
 			return;
 		
-		if(InventoryFree.appliesTo(event.player))
+		if(!InventoryFree.appliesTo(player))
+			return;
+		
+		Inventory inventory = player.getInventory();
+		int availableSlots = PlayerData.getAvailableSlots(player);
+		
+		int counter = 0;
+		for(int index = 0; index < inventory.getContainerSize(); index++)
 		{
-			Inventory inventory = event.player.getInventory();
-			int availableSlots = PlayerData.getAvailableSlots((ServerPlayer) event.player);
-			
-			int counter = 0;
-			for(int index = 0; index < inventory.getContainerSize(); index++)
-			{
-				if(enforceSlot(index, inventory, availableSlots))
-					counter++;
-			}
-			if(counter > 0)
-				LOGGER.info("Player \"{}\" had {} item stacks in invalid places this tick.",
-						event.player.getDisplayName().getString(), counter);
+			if(enforceSlot(index, inventory, availableSlots))
+				counter++;
 		}
+		if(counter > 0)
+			LOGGER.info("Player \"{}\" had {} item stacks in invalid places this tick.",
+					player.getDisplayName().getString(), counter);
 	}
 	
 	@SubscribeEvent

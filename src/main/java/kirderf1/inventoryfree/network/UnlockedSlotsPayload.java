@@ -1,9 +1,11 @@
 package kirderf1.inventoryfree.network;
 
+import io.netty.buffer.ByteBuf;
 import kirderf1.inventoryfree.InventoryFree;
 import kirderf1.inventoryfree.client.ClientData;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 /**
@@ -12,25 +14,16 @@ import net.minecraft.resources.ResourceLocation;
 @MethodsReturnNonnullByDefault
 public record UnlockedSlotsPayload(int unlockedSlots) implements ModPayloads.ToClientPayload
 {
-	public static final ResourceLocation ID = new ResourceLocation(InventoryFree.MOD_ID, "unlocked_slots");
+	public static final Type<UnlockedSlotsPayload> TYPE = new Type<>(new ResourceLocation(InventoryFree.MOD_ID, "unlocked_slots"));
+	
+	public static final StreamCodec<ByteBuf, UnlockedSlotsPayload> STREAM_CODEC = ByteBufCodecs.INT.map(UnlockedSlotsPayload::new, UnlockedSlotsPayload::unlockedSlots);
 	
 	@Override
-	public ResourceLocation id()
+	public Type<UnlockedSlotsPayload> type()
 	{
-		return ID;
+		return TYPE;
 	}
 	
-	public static UnlockedSlotsPayload read(FriendlyByteBuf buffer)
-	{
-		return new UnlockedSlotsPayload(buffer.readInt());
-	}
-
-	@Override
-	public void write(FriendlyByteBuf buffer)
-	{
-		buffer.writeInt(unlockedSlots);
-	}
-
 	@Override
 	public void execute()
 	{

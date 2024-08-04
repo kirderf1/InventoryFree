@@ -8,7 +8,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -38,9 +38,9 @@ public class InventoryFree
 	public static final Supplier<AttachmentType<Integer>> AVAILABLE_SLOTS_CACHE = ATTACHMENT_REGISTER.register("available_slots_cache",
 			() -> AttachmentType.builder(() -> 36).serialize(Codec.INT).copyOnDeath().build());
 	
-	public InventoryFree(IEventBus modEventBus)
+	public InventoryFree(IEventBus modEventBus, ModContainer modContainer)
 	{
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, configSpec);
+		modContainer.registerConfig(ModConfig.Type.SERVER, configSpec);
 		modEventBus.addListener(InventoryFree::onConfigReload);
 		modEventBus.addListener(SlotUnlocker::verifyUnlockItem);
 		ATTACHMENT_REGISTER.register(modEventBus);

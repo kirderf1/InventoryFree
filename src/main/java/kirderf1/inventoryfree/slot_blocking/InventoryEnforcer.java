@@ -7,7 +7,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.player.EntityItemPickupEvent;
+import net.neoforged.neoforge.common.util.TriState;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,13 +47,13 @@ public final class InventoryEnforcer
 	}
 	
 	@SubscribeEvent
-	private static void onItemPickup(EntityItemPickupEvent event)
+	private static void onItemPickup(ItemEntityPickupEvent.Pre event)
 	{
-		if(InventoryFree.appliesTo(event.getEntity()))
+		if(InventoryFree.appliesTo(event.getPlayer()))
 		{
-			if(!canStoreItem(event.getEntity().getInventory(), event.getItem().getItem(),
-					PlayerData.getAvailableSlots((ServerPlayer) event.getEntity())))
-				event.setCanceled(true);
+			if(!canStoreItem(event.getPlayer().getInventory(), event.getItemEntity().getItem(),
+					PlayerData.getAvailableSlots((ServerPlayer) event.getPlayer())))
+				event.setCanPickup(TriState.FALSE);
 		}
 	}
 	

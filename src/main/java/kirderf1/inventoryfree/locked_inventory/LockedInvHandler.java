@@ -10,6 +10,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameRules;
 import net.neoforged.bus.api.EventPriority;
@@ -51,7 +52,7 @@ public final class LockedInvHandler
 			Collection<ItemEntity> oldCapture = player.captureDrops(event.getDrops());
 			player.getData(InventoryFree.LOCKED_INVENTORY).getAndClearStacks().forEach(stack -> {
 				// Only add droppable items
-				if(!stack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(stack))
+				if(!stack.isEmpty() && !EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP))
 					player.drop(stack, true, false);
 			});
 			player.captureDrops(oldCapture);

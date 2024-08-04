@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 @MethodsReturnNonnullByDefault
 public record UnlockedSlotsPayload(int unlockedSlots) implements ModPayloads.ToClientPayload
 {
-	public static final Type<UnlockedSlotsPayload> TYPE = new Type<>(new ResourceLocation(InventoryFree.MOD_ID, "unlocked_slots"));
+	public static final Type<UnlockedSlotsPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(InventoryFree.MOD_ID, "unlocked_slots"));
 	
 	public static final StreamCodec<ByteBuf, UnlockedSlotsPayload> STREAM_CODEC = ByteBufCodecs.INT.map(UnlockedSlotsPayload::new, UnlockedSlotsPayload::unlockedSlots);
 	

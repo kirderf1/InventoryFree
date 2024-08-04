@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 @MethodsReturnNonnullByDefault
 public record LockedInvSyncPayload(ListTag nbt) implements ModPayloads.ToClientPayload
 {
-	public static final Type<LockedInvSyncPayload> TYPE = new Type<>(new ResourceLocation(InventoryFree.MOD_ID, "locked_inv_sync"));
+	public static final Type<LockedInvSyncPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(InventoryFree.MOD_ID, "locked_inv_sync"));
 	
 	public static final StreamCodec<FriendlyByteBuf, LockedInvSyncPayload> STREAM_CODEC = StreamCodec.ofMember(LockedInvSyncPayload::write, LockedInvSyncPayload::read);
 	

@@ -10,7 +10,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -130,7 +129,7 @@ public final class SlotUnlocker
 		}
 	}
 	
-	public static void verifyUnlockItem(ModConfigEvent event)
+	public static void verifyUnlockItem()
 	{
 		String itemIdStr = InventoryFree.CONFIG.unlockSlotItem.get();
 		if(itemIdStr.isEmpty())

@@ -8,7 +8,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -26,7 +28,8 @@ import java.util.function.Supplier;
  * The central mod class. Also holds the config and the player/slot conditions.
  */
 @Mod(InventoryFree.MOD_ID)
-public class InventoryFree
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+public final class InventoryFree
 {
 	public static final String MOD_ID = "inventory_free";
 	
@@ -40,18 +43,28 @@ public class InventoryFree
 	
 	public InventoryFree(IEventBus modEventBus, ModContainer modContainer)
 	{
-		modContainer.registerConfig(ModConfig.Type.SERVER, configSpec);
-		modEventBus.addListener(InventoryFree::onConfigReload);
-		modEventBus.addListener(SlotUnlocker::verifyUnlockItem);
+		modContainer.registerConfig(ModConfig.Type.SERVER, CONFIG_SPEC);
 		ATTACHMENT_REGISTER.register(modEventBus);
 		NeoForge.EVENT_BUS.addListener(InventoryFree::onRegisterCommands);
 	}
 	
+	@SubscribeEvent
+	private static void onConfigLoad(ModConfigEvent.Loading event)
+	{
+		if(event.getConfig().getSpec() == CONFIG_SPEC)
+			SlotUnlocker.verifyUnlockItem();
+	}
+	
+	@SubscribeEvent
 	private static void onConfigReload(ModConfigEvent.Reloading event)
 	{
-		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-		if(server != null)
-			server.submit(() -> LockedInvHandler.onConfigReload(server));
+		if(event.getConfig().getSpec() == CONFIG_SPEC)
+		{
+			SlotUnlocker.verifyUnlockItem();
+			MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+			if(server != null)
+				server.submit(() -> LockedInvHandler.onConfigReload(server));
+		}
 	}
 	
 	private static void onRegisterCommands(RegisterCommandsEvent event)
@@ -63,13 +76,13 @@ public class InventoryFree
 	 * Instance of the mod config.
 	 */
 	public static final Config CONFIG;
-	private static final ModConfigSpec configSpec;
+	private static final ModConfigSpec CONFIG_SPEC;
 	
 	static
 	{
 		var specPair = new ModConfigSpec.Builder().configure(Config::new);
 		CONFIG = specPair.getLeft();
-		configSpec = specPair.getRight();
+		CONFIG_SPEC = specPair.getRight();
 	}
 	
 	/**

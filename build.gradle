@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'idea'
-    id 'net.neoforged.gradle.userdev' version '7.0.157'
+    id 'net.neoforged.gradle.userdev' version '7.0.176'
 }
 
 version = mod_version

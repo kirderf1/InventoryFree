@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 @EventBusSubscriber(modid = InventoryFree.MOD_ID)
 public final class SlotBlocker
 {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger(InventoryFree.MOD_ID);
 	
 	@SubscribeEvent
 	private static void onContainerOpened(PlayerContainerEvent.Open event)

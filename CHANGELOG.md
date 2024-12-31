@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Update to Minecraft 1.21.3 / NeoForge 21.3
 
+### Changed
+
+- Change logger names to "inventory_free"
+
 ### Fixed
 
 - Fix error that was logged on config unload

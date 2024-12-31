@@ -22,7 +22,7 @@ import java.util.Objects;
 @EventBusSubscriber(modid = InventoryFree.MOD_ID, value = Dist.CLIENT)
 public final class ClientSlotBlocker
 {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger(InventoryFree.MOD_ID);
 	
 	@SubscribeEvent
 	private static void onLogin(ClientPlayerNetworkEvent.LoggingIn event)

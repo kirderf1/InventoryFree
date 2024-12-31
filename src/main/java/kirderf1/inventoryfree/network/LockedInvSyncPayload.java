@@ -23,7 +23,7 @@ public record LockedInvSyncPayload(ListTag nbt) implements ModPayloads.ToClientP
 	
 	public static final StreamCodec<FriendlyByteBuf, LockedInvSyncPayload> STREAM_CODEC = StreamCodec.ofMember(LockedInvSyncPayload::write, LockedInvSyncPayload::read);
 	
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger(InventoryFree.MOD_ID);
 	
 	@Override
 	public Type<LockedInvSyncPayload> type()
@@ -50,6 +50,6 @@ public record LockedInvSyncPayload(ListTag nbt) implements ModPayloads.ToClientP
 		if(nbt != null)
 		{
 			ClientData.handle(this);
-		} else LOGGER.warn("InventoryFree got sync packet with invalid data");
+		} else LOGGER.warn("Received sync packet with invalid data");
 	}
 }

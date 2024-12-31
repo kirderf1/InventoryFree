@@ -23,7 +23,7 @@ import java.util.function.IntUnaryOperator;
 @EventBusSubscriber(modid = InventoryFree.MOD_ID)
 public final class SlotUnlocker
 {
-	private static final Logger LOGGER = LogManager.getLogger();
+	private static final Logger LOGGER = LogManager.getLogger(InventoryFree.MOD_ID);
 	
 	@SubscribeEvent
 	private static void onRightClickItem(PlayerInteractEvent.RightClickItem event)

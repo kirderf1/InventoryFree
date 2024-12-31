@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.21.3-3.3.2] - 2024-12-31
+
 - Update to Minecraft 1.21.3 / NeoForge 21.3
 
 ### Changed

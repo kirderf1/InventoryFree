@@ -47,7 +47,7 @@ public final class LockedInvHandler
 	{
 		LivingEntity entity = event.getEntity();
 		if(entity instanceof ServerPlayer player
-				&& !entity.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
+				&& !player.serverLevel().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY))
 		{
 			Collection<ItemEntity> oldCapture = player.captureDrops(event.getDrops());
 			player.getData(InventoryFree.LOCKED_INVENTORY).getAndClearStacks().forEach(stack -> {

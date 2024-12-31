@@ -143,7 +143,7 @@ public final class SlotUnlocker
 			return;
 		}
 		
-		Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.get(itemId));
+		Item item = Objects.requireNonNull(BuiltInRegistries.ITEM.getValue(itemId));
 		
 		if(getRequiredItemCount(0, item.getDefaultInstance().getMaxStackSize()) == -1)
 			LOGGER.warn("Unlock item max stack size is lower than the cost to unlock the first slot. It will not be possible to unlock any slots with the item under these circumstances!");

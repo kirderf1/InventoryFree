@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -32,10 +33,6 @@ import java.util.Optional;
 public final class LockOverlay extends AbstractWidget
 {
 	private static final ResourceLocation LOCK = ResourceLocation.fromNamespaceAndPath(InventoryFree.MOD_ID, "textures/item/lock.png");
-	
-	// Must be large enough that the lock texture is drawn on top of slot items and the gui background,
-	// but small enough that it is drawn behind floating/dragged items and item tooltips.
-	private static final int LOCK_BLIT = 220;
 	
 	private final AbstractContainerScreen<?> screen;
 	
@@ -72,7 +69,7 @@ public final class LockOverlay extends AbstractWidget
 		{
 			if(slot instanceof BlockedSlot && !slot.isActive())
 			{
-				graphics.blit(LOCK, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+				graphics.blit(RenderType::guiTexturedOverlay, LOCK, screen.getGuiLeft() + slot.x, screen.getGuiTop() + slot.y, 0, 0, 16, 16, 16, 16);
 			}
 		}
 	}
@@ -115,7 +112,7 @@ public final class LockOverlay extends AbstractWidget
 				{
 					int x = (scaledWidth/2 - 90) + (slot.getSlotIndex() * 20 + 2);
 					int y = (scaledHeight - 16) - 3;
-					graphics.blit(LOCK, x, y, LOCK_BLIT, 0, 0, 16, 16, 16, 16);
+					graphics.blit(RenderType::guiTexturedOverlay, LOCK, x, y, 0, 0, 16, 16, 16, 16);
 				}
 			}
 		}
